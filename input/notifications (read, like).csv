@@ -1,4 +1,4 @@
-userPostID,userReplyID,type,actor,time
+userPost,userReply,type,actor,time
 0,,read,casssssssssie,0:01
 0,,read,M.Kapadia92,0:02
 0,,read,localewis,0:02
@@ -9,8 +9,6 @@ userPostID,userReplyID,type,actor,time
 0,,read,tastyrobot,0:23
 0,,read,lee.alexa,0:25
 0,,read,_aikira_,0:25
-0,,read,generic-joe,0:02
-0,,read,generic-joe,0:02
 0,,read,artisanalways,0:35
 0,,like,casssssssssie,0:01
 0,,like,M.Kapadia92,0:02
