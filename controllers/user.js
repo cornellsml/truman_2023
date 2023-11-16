@@ -112,11 +112,11 @@ exports.postSignup = async(req, res, next) => {
         /*###############################
         Place Experimental Varibles Here!
         ###############################*/
-        const versions = process.env.NUM_VARIABLES;
-        const variable_names = process.env.VARIABLE_NAMES.split(",");
+        const versions = process.env.NUM_EXP_CONDITIONS;
+        const variable_names = process.env.EXP_CONDITIONS_NAMES.split(",");
         const assignedGroup = variable_names[Math.floor(Math.random() * versions)];
 
-        const surveyLink = process.env.POST_SURVEY + req.body.mturkID;
+        const surveyLink = process.env.POST_SURVEY ? process.env.POST_SURVEY + req.body.mturkID : "";
         const currDate = Date.now();
         const user = new User({
             email: req.body.email,

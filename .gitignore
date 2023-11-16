@@ -19,6 +19,9 @@ public/css/main.css
 uploads/user_post
 uploads/user_avatar
 
+#data-exports
+outputFiles
+
 # API keys and secrets
 .env
 
