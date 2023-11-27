@@ -5,7 +5,7 @@
 Activate the environment `truman-env` and install the necessary dependencies with:
 ```bash
 conda env create --file requirements.yaml
-conda activate agent
+conda activate truman-env
 python -m spacy download en_core_web_sm
 pip install BeautifulSoup4 langchain chromadb openai tiktoken libmagic nest_asyncio 
 ```
