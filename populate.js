@@ -14,11 +14,11 @@ var mongoose = require('mongoose');
 const CSVToJSON = require("csvtojson");
 
 //Input Files
-const actor_inputFile = './input/actors.csv';
-const posts_inputFile = './input/posts.csv';
-const replies_inputFile = './input/replies.csv';
-const notifications_inputFile = './input/notifications (read, like).csv';
-const notifications_replies_inputFile = './input/notifications (reply).csv';
+const actor_inputFile = './input/ai_simulation_content/input/actors.csv';
+const posts_inputFile = './input/ai_simulation_content/input/posts.csv';
+const replies_inputFile = './input/ai_simulation_content/input/replies.csv';
+const notifications_inputFile = './input/ai_simulation_content/input/notifications (read, like).csv';
+const notifications_replies_inputFile = './input/ai_simulation_content/input/notifications (reply).csv';
 
 // Variables to be used later.
 var actors_list;
