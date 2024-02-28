@@ -1,0 +1,65 @@
+/* Content */
+
+.dashboardContentColumn {
+    visibility: hidden;
+    margin-bottom: 2em;
+}
+
+
+/* Menu */
+
+.ui.menu.adminDashboardMenu {
+    width: 20em;
+    padding: 80px 0 0 0;
+}
+
+.ui.menu.adminDashboardMobileMenu {
+    margin-top: 60px;
+}
+
+.ui.menu.adminDashboardMenu h3 {
+    padding-right: 40px;
+    padding-left: 20px;
+}
+
+.ui.menu.adminDashboardMenu a.item {
+    padding-right: 40px;
+    padding-left: 40px;
+    color: black;
+    background: rgba(0, 0, 0, .05);
+}
+
+.ui.menu.adminDashboardMenu a.item:hover {
+    color: black;
+    background: white;
+}
+
+.ui.menu.adminDashboardMenu a.item.active {
+    color: black;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .5);
+    background: white;
+}
+
+.ui.menu.adminDashboardMenu a.item.active:hover {
+    color: black;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .5);
+    background: white;
+}
+
+
+/* Hide the mobile menu when above tablet screen size */
+
+@media (min-width: 992px) {
+    .adminDashboardMobileMenu {
+        display: none !important;
+    }
+}
+
+
+/* Hide the side menu in favor of a compact mobile menu on screens tablet size and below */
+
+@media (max-width: 992px) {
+    .adminDashboardMenu {
+        display: none !important;
+    }
+}

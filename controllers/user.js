@@ -52,7 +52,11 @@ exports.postLogin = (req, res, next) => {
             const user_ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
             user.logUser(time_now, userAgent, user_ip);
             if (user.consent) {
-                res.redirect(req.session.returnTo || '/');
+                if (user.isAdmin) {
+                    res.redirect(req.session.returnTo || '/admin');
+                } else {
+                    res.redirect(req.session.returnTo || '/');
+                }
             } else {
                 res.redirect('/account/signup_info');
             }
@@ -352,7 +356,7 @@ exports.userTestResults = async(req, res) => {
                     await user.save();
                 }
             }
-            res.render('completed', { users: users });
+            res.render('adminDashboard/completed', { users: users });
         } catch (err) {
             next(err);
         }
