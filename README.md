@@ -10,3 +10,36 @@ Also special thanks to Sahat Yalkabov and his [Hackathon Starter](https://github
 
 ## **Demo**
 **[https://truman-2023-82f66bc03792.herokuapp.com/](https://truman-2023-82f66bc03792.herokuapp.com/)**. You may enter a random 6-digit ID when prompted to make an account and provide a Mechanical Turk ID.
+
+## Usage
+To run the script, use the following command in the terminal:
+```bash
+python code-gen-system.py
+```
+
+### Optional Arguments
+- `msg`: A string representing the task or requirement. Example:
+  ```bash
+  python code-gen-system.py --msg "Your requirement description here"
+  ```
+- `investment`: A float representing the investment amount for the task. Default is 20.0. Example:
+  ```bash
+  python code-gen-system.py --investment 50.0
+  ```
+- `n_round`: An integer representing the number of rounds for the process. Default is 5. Example:
+  ```bash
+  python code-gen-system.py --n_round 10
+  ```
+
+## Roles
+The script has two roles:
+- `ProjectManager`: Manages project tasks.
+- `Engineer`: Handles engineering tasks.
+
+## Actions
+1. **Requirement Understanding**: Interprets project requirements and identifies relevant files and implementation plans.
+2. **OpenFile**: Opens and reads files.
+3. **WriteCode**: Generates code snippets.
+
+## Notes
+- Update your OPENAI-APY KEY in key.yaml (you can find it under truman_2023/config/)
