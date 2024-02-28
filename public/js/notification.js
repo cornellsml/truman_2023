@@ -3,7 +3,7 @@ $(window).on("load", function() { //notifications popup on click, show the corre
         const relevantPostNumber = $(this).attr('correspondingPost');
         //show the relevant post in a popup modal
         $(`.ui.tiny.long.modal[correspondingPost=${relevantPostNumber}]`).modal('show');
-        // //lazy load the images
+        // lazy load the images
         $(".ui.tiny.long.modal .ui.fluid.card img")
             .visibility({
                 type: 'image',

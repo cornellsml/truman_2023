@@ -11,10 +11,10 @@
   .content
     .right.floated.time.meta= (user.createdAt.getTime() + val.time)
     a(href='/user/'+val.actor.username)     
-      img.ui.avatar.image(src=cdn+"/profile_pictures/"+val.actor.profile.picture)
+      img.ui.avatar.image(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
       span=val.actor.profile.name
   .img.post.image
-    img(src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
+    img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
   .content
     .description=val.body
     .myTimer.hidden 0
@@ -30,47 +30,46 @@
         i.heart.icon
         |  Like
       a.ui.basic.red.left.pointing.label.count=val.likes
-  if val.comments.filter(comment => user.createdAt.getTime() + comment.time < Date.now()).length > 0
+  if val.comments.length > 0
     .content
       .ui.comments
         each comment in val.comments
-          if (user.createdAt.getTime() + comment.time) < Date.now()
-            //- Comment is user-made
-            if comment.new_comment
-              .comment(commentID=comment.commentID)
-                a.avatar.image(href='/me')
-                  if user.profile.picture
-                    img(src='/user_avatar/'+user.profile.picture)
-                  else
-                    img(src=user.gravatar(60))
-                .content
-                  a.author(href='/me')=user.profile.name || user.username || user.id
-                  .metadata
-                    span.date=(user.createdAt.getTime() + comment.time)
-                    .rating
-                      i.heart.icon(class=comment.liked ? "red" : null)
-                      span.num=comment.likes+(comment.liked ? 1 : 0)
-                      |  Likes
-                  .text=comment.body
-                  .actions
-                    a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
-            //- Else this is a normal comment from the script
-            else
-              .comment(commentID=comment.id)
-                a.avatar(href='/user/'+comment.actor.username)                     
-                  img(src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
-                .content
-                  a.author(href='/user/'+comment.actor.username)=comment.actor.profile.name
-                  .metadata
-                    span.date=(user.createdAt.getTime() + comment.time)
-                    .rating
-                      i.heart.icon(class=comment.liked ? "red" : null)
-                      span.num=comment.likes+(comment.liked ? 1 : 0)
-                      |  Likes
-                  .text=comment.body
-                  .actions
-                    a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
-                    a.flag.comment Flag
+          //- Comment is user-made
+          if comment.new_comment
+            .comment(commentID=comment.commentID)
+              a.avatar.image(href='/me')
+                if user.profile.picture
+                  img(src='/user_avatar/'+user.profile.picture)
+                else
+                  img(src=user.gravatar(60))
+              .content
+                a.author(href='/me')=user.profile.name || user.username || user.id
+                .metadata
+                  span.date=(user.createdAt.getTime() + comment.time)
+                  .rating
+                    i.heart.icon(class=comment.liked ? "red" : null)
+                    span.num=comment.likes+(comment.liked ? 1 : 0)
+                    |  Likes
+                .text=comment.body
+                .actions
+                  a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
+          //- Else this is a normal comment from the script
+          else
+            .comment(commentID=comment.id)
+              a.avatar(href='/user/'+comment.actor.username)                     
+                img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
+              .content
+                a.author(href='/user/'+comment.actor.username)=comment.actor.profile.name
+                .metadata
+                  span.date=(user.createdAt.getTime() + comment.time)
+                  .rating
+                    i.heart.icon(class=comment.liked ? "red" : null)
+                    span.num=comment.likes+(comment.liked ? 1 : 0)
+                    |  Likes
+                .text=comment.body
+                .actions
+                  a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
+                  a.flag.comment Flag
   .extra.content
     .ui.fluid.left.labeled.right.icon.input
       .ui.label

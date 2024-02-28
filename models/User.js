@@ -29,8 +29,7 @@ const userSchema = new mongoose.Schema({
 
     mturkID: { type: String, unique: true },
 
-    group: String, //full group type for post displays. Values are found in .env file.
-
+    experimentalCondition: String, //Experimental condition user is assigned to. Values are defined in the .env file by the variable EXP_CONDITIONS_NAMES.
     // tokens: Array,
 
     blocked: [String], //list of usernames of actors user has blocked

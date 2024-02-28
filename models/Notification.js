@@ -9,6 +9,8 @@ const notificationSchema = new mongoose.Schema({
     userPostID: Number, //which user post this action is for (0,1,2....n)
     userReplyID: Number, //which user reply this action is for (0,1,2....n)
     replyBody: { type: String, default: '', trim: true }, //body of actor's reply
+
+    class: String, //For experimental use (if blank/null, post is shown to all users. if defined, post is shown only to user if user.experimentalCondition matches value)
 }, { timestamps: true });
 
 const Notification = mongoose.model('Notification', notificationSchema);

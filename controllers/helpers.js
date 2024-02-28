@@ -45,6 +45,8 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
         // Or If user_post[0] post is more recent than script_feed[0] post
         if (script_feed[0] === undefined ||
             ((user_posts[0] !== undefined) && (script_feed[0].time < user_posts[0].relativeTime))) {
+            // Filter comments to include only past simulated comments, not future simulated comments. 
+            user_posts[0].comments = user_posts[0].comments.filter(comment => comment.absTime < Date.now());
             //Look at the post in user_posts[0] now. 
             user_posts[0].comments.sort(function(a, b) {
                 return a.relativeTime - b.relativeTime;
@@ -59,6 +61,12 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                 user_posts.splice(0, 1);
             }
         } else {
+            //Filter comments to include only comments of the experimental condition the user is in.
+            script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.class || comment.class == user.experimentalCondition);
+
+            //Filter comments to include only past simulated comments, not future simulated comments.
+            script_feed[0].comments = script_feed[0].comments.filter(comment => user.createdAt.getTime() + comment.time < Date.now());
+
             //Looking at the post in script_feed[0] now.
             //For this post, check if there is a user feedAction matching this post's ID and get its index.
             const feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(script_feed[0].id) });

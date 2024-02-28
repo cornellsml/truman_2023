@@ -4,13 +4,13 @@ const color_error = '\x1b[31m%s\x1b[0m'; // red
 
 console.log(color_start, 'Started populate.js script...');
 
-var async = require('async');
-var Actor = require('./models/Actor.js');
-var Script = require('./models/Script.js');
-var Notification = require('./models/Notification.js');
+const async = require('async');
+const Actor = require('./models/Actor.js');
+const Script = require('./models/Script.js');
+const Notification = require('./models/Notification.js');
 const _ = require('lodash');
 const dotenv = require('dotenv');
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const CSVToJSON = require("csvtojson");
 
 //Input Files
@@ -256,7 +256,8 @@ async function doPopulate() {
                         const notifydetail = {
                             actor: act,
                             notificationType: new_notify.type,
-                            time: timeStringToNum(new_notify.time)
+                            time: timeStringToNum(new_notify.time),
+                            class: new_notify.class
                         };
 
                         if (new_notify.userPostID >= 0 && new_notify.userPostID) {
@@ -310,7 +311,8 @@ async function doPopulate() {
                                 body: new_reply.body,
                                 likes: getLikesComment(),
                                 actor: act,
-                                time: timeStringToNum(new_reply.time)
+                                time: timeStringToNum(new_reply.time),
+                                class: new_reply.class
                             };
 
                             pr.comments.push(comment_detail);

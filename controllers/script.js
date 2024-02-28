@@ -11,62 +11,64 @@ dotenv.config({ path: '.env' });
  * Get list of posts for feed
  */
 exports.getScript = async(req, res, next) => {
-        try {
-            const one_day = 86400000; // number of milliseconds in a day
-            const time_now = Date.now();
-            const time_diff = time_now - req.user.createdAt; //Time difference between now and account creation.
-            const time_limit = time_diff - one_day; //used later to show posts only in the past 24 hours
+    try {
+        const one_day = 86400000; //Number of milliseconds in a day
+        const time_now = Date.now(); //Current date
+        const time_diff = time_now - req.user.createdAt; //Time difference between now and user account creation.
+        const time_limit = time_diff - one_day; //Variable used later to show posts only in the past 24 hours
 
-            const user = await User.findById(req.user.id)
-                .populate('posts.comments.actor')
-                .exec();
+        const user = await User.findById(req.user.id)
+            .populate('posts.comments.actor')
+            .exec();
 
-            //User is no longer active
-            if (!user.active) {
-                req.logout((err) => {
-                    if (err) console.log('Error : Failed to logout.', err);
-                    req.session.destroy((err) => {
-                        if (err) console.log('Error : Failed to destroy the session during logout.', err);
-                        req.user = null;
-                        req.flash('errors', { msg: 'Account is no longer active. Study is over.' });
-                        res.redirect('/login');
-                    });
+        //User is no longer active
+        if (!user.active) {
+            req.logout((err) => {
+                if (err) console.log('Error : Failed to logout.', err);
+                req.session.destroy((err) => {
+                    if (err) console.log('Error : Failed to destroy the session during logout.', err);
+                    req.user = null;
+                    req.flash('errors', { msg: 'Account is no longer active. Study is over.' });
+                    res.redirect('/login');
                 });
-            }
-
-            //What day in the study is the user in? 
-            //Update study_days, which tracks the number of time user views feed.
-            const current_day = Math.floor(time_diff / one_day);
-            if (current_day < process.env.NUM_DAYS) {
-                user.study_days[current_day] += 1;
-            }
-
-            //Get the newsfeed
-            let script_feed = await Script.find()
-                .where('time').lte(time_diff).gte(time_limit)
-                .sort('-time')
-                .populate('actor')
-                .populate('comments.actor')
-                .exec();
-
-            //Array of any user-made posts within the past 24 hours, sorted by time they were created.
-            let user_posts = user.getPostInPeriod(time_limit, time_diff);
-            user_posts.sort(function(a, b) {
-                return b.relativeTime - a.relativeTime;
             });
-
-            const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, true);
-            console.log("Script Size is now: " + finalfeed.length);
-            await user.save();
-            res.render('script', { script: finalfeed, showNewPostIcon: true });
-        } catch (err) {
-            next(err);
         }
+
+        //What day in the study is the user in? 
+        //Update study_days, which tracks the number of time user views feed.
+        const current_day = Math.floor(time_diff / one_day);
+        if (current_day < process.env.NUM_DAYS) {
+            user.study_days[current_day] += 1;
+        }
+
+        //Get the newsfeed
+        let script_feed = await Script.find({
+                class: { "$in": ["", user.experimentalCondition] }
+            })
+            .where('time').lte(time_diff).gte(time_limit)
+            .sort('-time')
+            .populate('actor')
+            .populate('comments.actor')
+            .exec();
+
+        //Array of any user-made posts within the past 24 hours, sorted by time they were created.
+        let user_posts = user.getPostInPeriod(time_limit, time_diff);
+        user_posts.sort(function(a, b) {
+            return b.relativeTime - a.relativeTime;
+        });
+
+        const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, true);
+        console.log("Script Size is now: " + finalfeed.length);
+        await user.save();
+        res.render('script', { script: finalfeed, showNewPostIcon: true });
+    } catch (err) {
+        next(err);
     }
-    /*
-     * Post /post/new
-     * Add new user post, including actor replies (comments) that go along with it.
-     */
+};
+/*
+ * Post /post/new
+ * Add new user post, including actor replies (comments) that go along with it.
+ */
 exports.newPost = async(req, res) => {
     try {
         const user = await User.findById(req.user.id).exec();
@@ -89,7 +91,7 @@ exports.newPost = async(req, res) => {
 
             //Now we find any Actor Replies (Comments) that go along with it
             const actor_replies = await Notification.find()
-                .where('userPost').equals(post.postID)
+                .where('userPostID').equals(post.postID)
                 .where('notificationType').equals('reply')
                 .populate('actor').exec();
 

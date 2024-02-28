@@ -21,7 +21,10 @@ exports.getNotifications = async(req, res) => {
                 }).exec();
             const currDate = Date.now();
             const lastNotifyVisit = user.lastNotifyVisit; //Absolute Date
-            const notification_feed = await Notification.find({ $or: [{ userPostID: { $lte: user.numPosts } }, { userReply: { $lte: user.numComments } }] })
+            const notification_feed = await Notification.find({
+                    $or: [{ userPostID: { $lte: user.numPosts } }, { userReply: { $lte: user.numComments } }],
+                    class: { "$in": ["", user.experimentalCondition] }
+                })
                 .populate('actor')
                 .sort('-time')
                 .exec();
@@ -213,6 +216,7 @@ exports.getNotifications = async(req, res) => {
             }
         };
     } catch (err) {
+        console.log(err);
         next(err);
     }
 }

@@ -42,10 +42,6 @@ button,
 
 /*Other*/
 
-#newpost.ui.fluid.left.labeled.right.icon.input {
-    cursor: pointer;
-}
-
 .ui.fluid.card>.content>.description {
     font-size: 1.05em;
 }

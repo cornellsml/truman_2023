@@ -5,20 +5,23 @@ const helpers = require('./helpers');
 
 /**
  * GET /actors
- * Get list of all actors
+ * Get and render the list of all actors in the Actor database.
  */
 exports.getActors = (req, res) => {
-    Actor.find()
-        .then((actors) => {
-            console.log(actors);
-            res.render('actors', { actors: actors });
-        })
-        .catch((err) => done(err));
+    if (!req.user.isAdmin) {
+        res.redirect('/');
+    } else {
+        Actor.find()
+            .then((actors) => {
+                res.render('actors', { actors: actors });
+            })
+            .catch((err) => done(err));
+    }
 };
 
 /**
  * GET /user/:userId
- * Get actor profile
+ * Get the profile of the actor whose username field matches the parameter value 'userId'.
  */
 exports.getActor = async(req, res, next) => {
     const time_diff = Date.now() - req.user.createdAt;
@@ -31,8 +34,7 @@ exports.getActor = async(req, res, next) => {
         }
         const isBlocked = user.blocked.includes(req.params.userId);
         const isReported = user.reported.includes(req.params.userId);
-
-        let script_feed = await Script.find({ actor: actor.id })
+        let script_feed = await Script.find({ actor: actor.id, class: { "$in": ["", user.experimentalCondition] } })
             .where('time').lte(time_diff)
             .sort('-time')
             .populate('actor')
@@ -49,7 +51,7 @@ exports.getActor = async(req, res, next) => {
 
 /**
  * POST /user
- * Update block, report, follow actor list.
+ * Update the block, report, follow actor list of the user.
  */
 exports.postBlockReportOrFollow = async(req, res, next) => {
     const currDate = Date.now();

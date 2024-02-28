@@ -4,10 +4,10 @@ block styles
   link(type='text/css', rel='stylesheet', href='/public/css/script.css')
   
 block content
-  .computer.only.tablet.only.four.wide.column 
+  .computer.only.tablet.only.four.wide.column
     .ui.card
       .image
-        img(src=cdn+'/profile_pictures/'+actor.profile.picture)
+        img(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+actor.profile.picture)
       .content
         a.header= actor.profile.name
         .meta="@"+actor.username

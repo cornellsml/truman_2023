@@ -44,16 +44,3 @@ exports.isAuthenticated = (req, res, next) => {
     }
     res.redirect('/login');
 };
-
-/**
- * Authorization Required middleware.
- */
-exports.isAuthorized = (req, res, next) => {
-    const provider = req.path.split('/').slice(-1)[0];
-    const token = req.user.tokens.find(token => token.kind === provider);
-    if (token) {
-        return next();
-    } else {
-        return res.redirect(`/auth/${provider}`);
-    }
-};

@@ -7,7 +7,7 @@ block content
     for actor in actors
       .ui.card
         .image
-          img(src=cdn+'/profile_pictures/'+actor.profile.picture)
+          img(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+actor.profile.picture)
         .content
           a(href='/user/'+actor.username).header= actor.profile.name
           .meta="@"+actor.username

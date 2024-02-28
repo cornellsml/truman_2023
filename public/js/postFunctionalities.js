@@ -204,7 +204,7 @@ function addComment(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             }).then(function(json) {
                 numComments = json.numComments;
-            });;
+            });
     }
 }
 

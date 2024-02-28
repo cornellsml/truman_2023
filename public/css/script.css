@@ -1,3 +1,8 @@
+#content.hidden {
+    display: none;
+}
+
+
 /*CSS for Posts*/
 
 .ui[class*="bottom attached"].buttons .button:first-child {

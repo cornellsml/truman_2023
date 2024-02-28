@@ -58,7 +58,6 @@ $(window).on("load", function() {
 
     //close loading dimmer on load
     $('#loading').hide();
-    $('#content').attr('style', 'block');
     $('#content').fadeIn('slow');
 
     //Semantic UI: function for closing messages
@@ -105,6 +104,11 @@ $(window).on("load", function() {
         window.location.href = '/account';
     });
 
+    // Lazy loading of images
+    $(`#content .fluid.card .img img, #content img.ui.avatar.image, #content a.avatar img`).visibility({
+        type: 'image'
+    });
+
     // Track how long a post is on the screen (borders are defined by image)
     // Start time: When the entire photo is visible in the viewport.
     // End time: When the entire photo is no longer visible in the viewport.
@@ -140,7 +144,7 @@ $(window).on("load", function() {
 
             var parent = $(this).parents(".ui.fluid.card");
             var postID = parent.attr("postID");
-            var postClass = parent.attr("postClass");;
+            var postClass = parent.attr("postClass");
             // If user viewed it for less than 24 hours, but more than 1.5 seconds (just in case)
             if (totalViewTime < 86400000 && totalViewTime > 1500 && startTime > 0) {
                 $.post("/feed", {
@@ -174,7 +178,7 @@ $(window).on("load", function() {
 
                 var parent = $(this).parents(".ui.fluid.card");
                 var postID = parent.attr("postID");
-                var postClass = parent.attr("postClass");;
+                var postClass = parent.attr("postClass");
                 // If user viewed it for less than 24 hours, but more than 1.5 seconds (just in case)
                 if (totalViewTime < 86400000 && totalViewTime > 1500 && startTime > 0) {
                     $.post("/feed", {
