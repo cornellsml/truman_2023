@@ -1,7 +1,7 @@
 .computer.only.tablet.only.row 
-  .ui.borderless.fixed.menu
+  .ui.borderless.fixed.menu.trumanHeader
     .ui.container
-      a.item(href= user===undefined ? '/' : (user.consent ? "/": "#"))
+      a.item(href= user===undefined ? '/' : (user.consent ? !user.isAdmin ? "/" : "/admin": "#"))
         img.ui.tiny.image(src=process.env.SITE_LOGO, id='logo')
       .right.menu
         if !user
@@ -12,8 +12,9 @@
             if(showNewPostIcon)
               a.item.newpost
                 i.big.write.square.icon
-            a.item(href='/notifications') 
-              i.big.alarm.icon
+            if !user.isAdmin
+              a.item(href='/notifications') 
+                i.big.alarm.icon
           .ui.simple.dropdown.item
             if user.profile.picture
               img.ui.mini.spaced.circular.image(src='/user_avatar/'+user.profile.picture)
@@ -26,13 +27,10 @@
               if user.consent
                 a.item(href='/me') My Profile
                 a.item(href='/account') Update My Profile
-                if user.isAdmin
-                  a.item(href='/completed') Study Progress
-                  a.item(href='/actors') Simulation (Actors)
                 a.item(href='/com') View Community Rules
               a.item.logoutLink Log Out
 .mobile.only.row
-  .ui.fluid.top.fixed.four.item.menu
+  .ui.fluid.top.fixed.four.item.menu.trumanHeader
     a.item(href=user===undefined ? '/' : (user.consent ? "/": "#"))
       img.ui.tiny.image(src=process.env.SITE_LOGO, id='mobile_logo')
     if !user
@@ -43,8 +41,9 @@
         if(showNewPostIcon)
           a.item.newpost
             i.big.write.square.icon
-        a.item(href='/notifications') 
-          i.big.alarm.icon
+        if !user.isAdmin
+          a.item(href='/notifications') 
+            i.big.alarm.icon
       else 
         .item 
         .item
@@ -58,8 +57,5 @@
           if user.consent
             a.item(href='/me') My Profile
             a.item(href='/account') Update My Profile
-            if user.isAdmin
-              a.item(href='/completed') Study Progress
-              a.item(href='/actors') Simulation (Actors)
             a.item(href='/com') View Community Rules
           a.item.logoutLink Log Out

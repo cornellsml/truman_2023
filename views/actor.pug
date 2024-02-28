@@ -27,10 +27,9 @@ block content
           i.ban.icon
         button.ui.button.report(data-tooltip='Report User', data-position='bottom right', username=actor.username)
           i.flag.icon
-
   #loading.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column
     img.ui.centered.small.image(src='/public/heart.svg')
-  #content.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column(style='display: none;')
+  #content.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column.hidden
     if (script.length==0)
       .ui.fluid.card
         .content

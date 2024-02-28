@@ -194,8 +194,6 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
 
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
-app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
-
 app.get('/notifications', passportConfig.isAuthenticated, notificationController.getNotifications);
 
 app.get('/login', userController.getLogin);
@@ -219,7 +217,6 @@ app.post('/account/consent', passportConfig.isAuthenticated, userController.post
 app.get('/me', passportConfig.isAuthenticated, userController.getMe);
 app.get('/user/:userId', passportConfig.isAuthenticated, actorsController.getActor);
 app.post('/user', passportConfig.isAuthenticated, actorsController.postBlockReportOrFollow);
-app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors)
 
 app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
 app.post('/feed', passportConfig.isAuthenticated, scriptController.postUpdateFeedAction);
@@ -229,6 +226,29 @@ app.get('/test', passportConfig.isAuthenticated, function(req, res) {
         title: 'Test'
     })
 });
+
+
+/**
+ * Administrator-only routes.
+ */
+app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
+app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors);
+app.get('/admin', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/adminHomePage', {
+        title: 'Admin Home'
+    })
+});
+app.get('/simulationContent', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/simulationForm', {
+        title: 'Simulation Content Form'
+    })
+});
+app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/simulationForm', {
+        title: 'Simulation Content Form'
+    })
+});
+
 
 /**
  * Error Handler.
