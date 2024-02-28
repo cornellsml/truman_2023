@@ -31,12 +31,16 @@ button,
 
 /* Header CSS */
 
-.ui.menu .item>i.icon {
+.ui.menu.trumanHeader .item>i.icon {
     margin: 0 !important;
 }
 
-.ui.mini.image {
+.ui.menu.trumanHeader .ui.mini.image {
     height: 35px;
+}
+
+.ui.menu.trumanHeader {
+    z-index: 10000002;
 }
 
 

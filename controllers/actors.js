@@ -11,11 +11,14 @@ exports.getActors = (req, res) => {
     if (!req.user.isAdmin) {
         res.redirect('/');
     } else {
-        Actor.find()
+        Actor.find({})
             .then((actors) => {
-                res.render('actors', { actors: actors });
+                res.render('adminDashboard/actors', { actors: actors, title: 'Actors' });
             })
-            .catch((err) => done(err));
+            .catch((err) => {
+                console.log(err);
+                done(err)
+            });
     }
 };
 
