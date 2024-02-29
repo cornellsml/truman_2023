@@ -72,7 +72,7 @@ $(window).on("load", function() {
             path: window.location.pathname,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
-        if (window.location.pathname !== '/notifications') {
+        if (window.location.pathname !== '/notifications' && window.location.pathname !== "/") {
             setInterval(function() {
                 // method to be executed;
                 $.getJSON("/notifications", { bell: true }, function(json) {

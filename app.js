@@ -20,6 +20,9 @@ const fs = require('fs');
 const util = require('util');
 fs.readFileAsync = util.promisify(fs.readFile);
 
+// Admin feature dashboard 
+const spawn = require("child_process").spawn;
+
 /**
  * Middleware for handling multipart/form-data, which is primarily used for uploading files.
  * Files are uploaded when user's upload their profile photos and post photos.
@@ -244,9 +247,47 @@ app.get('/admin', passportConfig.isAuthenticated, function(req, res) {
 });
 app.get('/simulationContent', passportConfig.isAuthenticated, function(req, res) {
     res.render('adminDashboard/simulationForm', {
-        title: 'Simulation Content Form'
+        title: 'Making Changes to the Simulation Content'
     })
 });
+app.get('/interfaceForm', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/codebaseForm', {
+        title: 'Making Changes to the Interface'
+    })
+});
+
+app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(req, res) {
+    // formData: dictionary 
+    // - _csrf:
+    // - prompt:
+    // - investment:
+    // - n_round:
+    const formData = JSON.stringify(req.body);
+
+    // Using child_process.spawn method from child_process module and assign it to variable pythonProcess 
+    // Parameters passed in spawn - 
+    // 1. type_of_script 
+    // 2. list containing Path of the script and arguments for the script 
+    const pythonProcess = spawn('python', ["MetaGPT/code_gen_system.py"]);
+
+    let result = [];
+    // Takes stdout data from script which executed 
+    // with arguments and send this data to res object 
+    pythonProcess.stdout.on('data', (data) => {
+        // Do something with the data returned from python script
+        result.push(data.toString());
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error('err: ', data.toString());
+    });
+
+    pythonProcess.on('close', function(code) {
+        console.log("RESULT: ", result);
+        res.send(result.toString());
+    });
+});
+
 app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(req, res) {
     res.render('adminDashboard/simulationForm', {
         title: 'Simulation Content Form'
