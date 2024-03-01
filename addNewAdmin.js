@@ -52,10 +52,6 @@ async function addAdminToDB() {
         mturkID: username,
         consent: true
     });
-    user.profile.name = username + " - ADMIN";
-    user.profile.location = "Guest Town";
-    user.profile.bio = '';
-    user.profile.picture = 'avatar-icon.svg';
     try {
         const existingUser = await User.findOne({ email: email }).exec();
         if (existingUser) {
