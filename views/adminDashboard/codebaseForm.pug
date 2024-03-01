@@ -15,3 +15,10 @@ block content
         label(for='n_round') n_round
         input.form-control(type='text', name='n_round', id='n_round', placeholder='Provide the number of rounds desired for the process. If left blank, the default is 5.')
       button.ui.large.button.green(type='submit') Submit
+
+block scripts 
+  script.
+    $("form#simulation").submit(function(){
+      $("button.ui.large.button.green").text("Generating Code..."); 
+      $("button.ui.large.button.green").addClass("disabled"); 
+    });

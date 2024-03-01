@@ -50,6 +50,7 @@ async function addAdminToDB() {
         isAdmin: true,
         createdAt: currDate,
         mturkID: username,
+        consent: true
     });
     user.profile.name = username + " - ADMIN";
     user.profile.location = "Guest Town";

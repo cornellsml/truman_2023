@@ -13,6 +13,8 @@ import json
 import fire
 import re
 
+import sys
+
 with open(DATA_PATH / "files_and_descriptions.json", 'r') as f:
     file_descriptions = json.load(f)
 
@@ -80,7 +82,7 @@ class ProjectManager(Role):
         self._watch([BossRequirement])
 
     async def _act(self) -> Message:
-        logger.info(f"{self._setting}: ready to {self._rc.todo}")
+        sys.stdout.write(f"{self._setting}: ready to {self._rc.todo}")
         todo = self._rc.todo
 
         msg = self.get_memories()[-1] # find the most k recent messages
@@ -117,7 +119,7 @@ class OpenFile(Action):
         rsp = await self._aask(prompt)
         if rsp == "EMPTY":
             return rsp
-        logger.info(f'Opening {rsp}..')
+        sys.stdout.write(f'Opening {rsp}..')
         with open(PROJECT_ROOT / rsp.replace('`', '').replace('\n', '').replace('"', ''), 'r') as f:
             content = f.read()
         return content
@@ -135,7 +137,7 @@ class WriteCode(Action):
 
     ## Generated Code Snippet: Provided as Python str. Output the generated code snippet as well as the location.
 
-    output only the generated code snippet as a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like format example,
+    Output only the generated code snippet as a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like format example,
     and only output the json inside this tag, nothing else
     """
 
@@ -155,12 +157,12 @@ class Engineer(Role):
         self._watch([RequirementUnderstanding])
 
     async def _act(self) -> Message:
-        # logger.info(f"{self._setting}: ready to {self._rc.todo}")
+        # sys.stdout.write(f"{self._setting}: ready to {self._rc.todo}")
         # todo = self._rc.todo
         req = self.get_memories()[-1]
         data = parse_data(req.content)
         for impl in data["Implementation Plan"]:
-            logger.info(f'Implementing {impl[0]}: {impl[1]}..')
+            sys.stdout.write(f'Implementing {impl[0]}: {impl[1]}..')
             content = await OpenFile().run(step=impl[1])
             result = await WriteCode().run(step=impl[1], file_content=content)
         
@@ -174,11 +176,15 @@ class WriteFile(Action):
 
 async def main(
     # msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster’s name. ",
-    msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster’s name. ",
+    # msg: str = sys.argv[1]["prompt"] or "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster’s name. ",
+    # investment: float = float(sys.argv[1]["investment"]) or 20.0,
+    # n_round: int = int(sys.argv[1]["n_round"]) or 5,
+    msg: str = "Add a grey box above each comment box in actor post. The grey box should include a feeling prompt question: 'How is Jane Done feeling?'. Each prompt was customized by the poster's name. ",
     investment: float = 20.0,
     n_round: int = 5,
 ):
-    logger.info(msg)
+    sys.stdout.write(msg)
+    # sys.stdout.write("{}".format(int(a) + int(b)))
 
     team = Team()
     team.hire(

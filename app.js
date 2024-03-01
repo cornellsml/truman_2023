@@ -271,20 +271,39 @@ app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(re
     const pythonProcess = spawn('python', ["MetaGPT/code_gen_system.py"]);
 
     let result = [];
-    // Takes stdout data from script which executed 
-    // with arguments and send this data to res object 
+    let result2 = "";
+    let result3 = [];
+    // Takes and append stdout data from script which executed with arguments to result
     pythonProcess.stdout.on('data', (data) => {
         // Do something with the data returned from python script
         result.push(data.toString());
+        result2 += data.toString();
     });
 
     pythonProcess.stderr.on('data', (data) => {
         console.error('err: ', data.toString());
     });
 
+    pythonProcess.on('error', (error) => {
+        console.error('error: ', error.message);
+    });
+
+    // In close event, the stream from child process is closed.
     pythonProcess.on('close', function(code) {
         console.log("RESULT: ", result);
-        res.send(result.toString());
+        // Send data to browser.
+        console.log("RESULT2: " + result2.toString());
+        const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
+        const result3 = result.join('');
+        console.log(result3);
+        let formattedResult = result3.match(regex);
+        console.log(formattedResult)
+            // formattedResult.map(result => JSON.parse(result.trim()));
+        res.render('adminDashboard/codebaseForm_Results', {
+            title: 'Results',
+            data: result,
+            data2: result2
+        })
     });
 });
 

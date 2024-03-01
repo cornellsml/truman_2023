@@ -72,16 +72,16 @@ $(window).on("load", function() {
             path: window.location.pathname,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
-        if (window.location.pathname !== '/notifications' && window.location.pathname !== "/") {
-            setInterval(function() {
-                // method to be executed;
-                $.getJSON("/notifications", { bell: true }, function(json) {
-                    if (json.count != 0) {
-                        $("i.big.alarm.icon").replaceWith('<i class="big icons"><i class="red alarm icon"></i><i class="corner yellow lightning icon"></i></i>');
-                    }
-                });
-            }, 5000);
-        }
+        // if (window.location.pathname !== '/notifications' && window.location.pathname !== "/") {
+        //     setInterval(function() {
+        //         // method to be executed;
+        //         $.getJSON("/notifications", { bell: true }, function(json) {
+        //             if (json.count != 0) {
+        //                 $("i.big.alarm.icon").replaceWith('<i class="big icons"><i class="red alarm icon"></i><i class="corner yellow lightning icon"></i></i>');
+        //             }
+        //         });
+        //     }, 5000);
+        // }
     };
 
     //Picture Preview on Image Selection (Used for: uploading new post, updating profile)
