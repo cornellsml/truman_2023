@@ -256,28 +256,29 @@ app.get('/interfaceForm', passportConfig.isAuthenticated, function(req, res) {
     })
 });
 
+app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/simulationForm', {
+        title: 'Simulation Content Form'
+    })
+});
 app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(req, res) {
-    // formData: dictionary 
-    // - _csrf:
-    // - prompt:
-    // - investment:
-    // - n_round:
-    const formData = JSON.stringify(req.body);
+    // // Using child_process.spawn method from child_process module and assign it to variable pythonProcess 
+    // // Parameters passed in spawn - 
+    // // 1. type_of_script - ex. 'python'
+    // // 2. path of the script and arguments for the script
+    const prompt = req.body.prompt || "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: 'How is Jane Done feeling?'. Each prompt was customized by the poster's name.";
+    const investment = req.body.investment || 20.0;
+    const n_round = req.body.n_round || 5;
+    const pythonProcess = spawn('python', ["MetaGPT/code_gen_system.py", prompt, investment, n_round]);
+    let result = "";
 
-    // Using child_process.spawn method from child_process module and assign it to variable pythonProcess 
-    // Parameters passed in spawn - 
-    // 1. type_of_script 
-    // 2. list containing Path of the script and arguments for the script 
-    const pythonProcess = spawn('python', ["MetaGPT/code_gen_system.py"]);
-
-    let result = [];
-    let result2 = "";
-    let result3 = [];
     // Takes and append stdout data from script which executed with arguments to result
     pythonProcess.stdout.on('data', (data) => {
         // Do something with the data returned from python script
-        result.push(data.toString());
-        result2 += data.toString();
+
+        // const modifiedString = data.toString().replace(/"/g, "'").replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+        // result += modifiedString;
+        result += data.toString();
     });
 
     pythonProcess.stderr.on('data', (data) => {
@@ -290,28 +291,27 @@ app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(re
 
     // In close event, the stream from child process is closed.
     pythonProcess.on('close', function(code) {
-        console.log("RESULT: ", result);
         // Send data to browser.
-        console.log("RESULT2: " + result2.toString());
+        result = result.replace(/\r\n/g, ""); // remove new lines
+
+        const prompt = result.substring(0, result.indexOf("PM(ProjectManager):"));
+
         const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
-        const result3 = result.join('');
-        console.log(result3);
-        let formattedResult = result3.match(regex);
-        console.log(formattedResult)
-            // formattedResult.map(result => JSON.parse(result.trim()));
+        let formattedResult = result.match(regex);
+        if (formattedResult) {
+            formattedResult = formattedResult.map(result => JSON.parse(result.trim()));
+        }
+
+        console.log(formattedResult);
         res.render('adminDashboard/codebaseForm_Results', {
             title: 'Results',
-            data: result,
-            data2: result2
+            prompt: prompt,
+            result: formattedResult || []
         })
     });
 });
 
-app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(req, res) {
-    res.render('adminDashboard/simulationForm', {
-        title: 'Simulation Content Form'
-    })
-});
+
 
 
 /**

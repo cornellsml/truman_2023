@@ -7,18 +7,14 @@ block content
       input(type='hidden', name='_csrf', value=_csrf)
       .field
         label(for='prompt') Prompt
-        input.form-control(type='text', name='prompt', id='prompt', placeholder='Describe the change you would like to make to The Truman Platform. Be as detailed as possible.')
+        textarea.form-control(type='text', name='prompt', id='prompt', placeholder='Describe the change you would like to make to The Truman Platform. Be as detailed as possible.')
       .field
         label(for='investment') Investment
         input.form-control(type='text', name='investment', id='investment', placeholder='Provide the investment amount for the task. If left blank, the default is 20.0.')
       .field
         label(for='n_round') n_round
         input.form-control(type='text', name='n_round', id='n_round', placeholder='Provide the number of rounds desired for the process. If left blank, the default is 5.')
-      button.ui.large.button.green(type='submit') Submit
+      button.ui.large.button.green.submission(type='submit') Submit
 
 block scripts 
-  script.
-    $("form#simulation").submit(function(){
-      $("button.ui.large.button.green").text("Generating Code..."); 
-      $("button.ui.large.button.green").addClass("disabled"); 
-    });
+  script(src='/public/js/codebaseForm.js')

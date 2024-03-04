@@ -19,14 +19,6 @@ html
     block styles
     if user && user.isAdmin
       link(rel='stylesheet', href='/public/css/adminDashboard/sideMenu.css')
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js')
-  script(src='https://d35ayucabfexcy.cloudfront.net/js/lib/humanized_time_span.js')
-  script(src='https://d35ayucabfexcy.cloudfront.net/js/lib/lazyload.transpiled.min.js')
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js')
-  script(src='/public/js/main.js')
-  if user && user.isAdmin
-    script(src='/public/js/dashboardTool.js')
-  block scripts
 
   body
     .ui.vertically.padded.grid.container#pagegrid
@@ -36,3 +28,13 @@ html
       .ui.grid.container.dashboardContentColumn#pagecontainer
         include partials/ui_flash
         block content
+
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js')
+  script(src='https://d35ayucabfexcy.cloudfront.net/js/lib/humanized_time_span.js')
+  script(src='https://d35ayucabfexcy.cloudfront.net/js/lib/lazyload.transpiled.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js')
+  script(src='https://unpkg.com/typeit@8.7.1/dist/index.umd.js')
+  script(src='/public/js/main.js')
+  if user && user.isAdmin
+    script(src='/public/js/dashboardTool.js')
+  block scripts

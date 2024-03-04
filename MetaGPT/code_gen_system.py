@@ -176,12 +176,12 @@ class WriteFile(Action):
 
 async def main(
     # msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster’s name. ",
-    # msg: str = sys.argv[1]["prompt"] or "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster’s name. ",
-    # investment: float = float(sys.argv[1]["investment"]) or 20.0,
-    # n_round: int = int(sys.argv[1]["n_round"]) or 5,
-    msg: str = "Add a grey box above each comment box in actor post. The grey box should include a feeling prompt question: 'How is Jane Done feeling?'. Each prompt was customized by the poster's name. ",
-    investment: float = 20.0,
-    n_round: int = 5,
+    msg: str = sys.argv[1],
+    investment: float = sys.argv[2],
+    n_round: int = sys.argv[3],
+    # msg: str = "Add a grey box above each comment box in actor post. The grey box should include a feeling prompt question: 'How is Jane Done feeling?'. Each prompt was customized by the poster's name. ",
+    # investment: float = 20.0,
+    # n_round: int = 5,
 ):
     sys.stdout.write(msg)
     # sys.stdout.write("{}".format(int(a) + int(b)))
