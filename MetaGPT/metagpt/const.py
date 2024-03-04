@@ -30,7 +30,7 @@ def get_project_root():
 
 
 PROJECT_ROOT = get_project_root()
-DATA_PATH = PROJECT_ROOT / "Metagpt/data"
+DATA_PATH = PROJECT_ROOT / "MetaGPT/data"
 WORKSPACE_ROOT = PROJECT_ROOT / "workspace"
 PROMPT_PATH = PROJECT_ROOT / "metagpt/prompts"
 UT_PATH = PROJECT_ROOT / "data/ut"
