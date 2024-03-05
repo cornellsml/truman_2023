@@ -1,9 +1,9 @@
 extends ../ui_layout
 
 block content
-  .twelve.wide.column(style="margin-top: 2em; margin-bottom: 2em;")
+  .eight.wide.column(style="margin-top: 2em; margin-bottom: 2em;")
     h2(style="text-align: center;") Task
-    form.ui.large.form(action='/generateInterfaceChange', method='POST', id='simulation')
+    form.ui.large.form(id='simulation')
       input(type='hidden', name='_csrf', value=_csrf)
       .field
         label(for='prompt') Prompt
@@ -14,7 +14,36 @@ block content
       .field
         label(for='n_round') n_round
         input.form-control(type='text', name='n_round', id='n_round', placeholder='Provide the number of rounds desired for the process. If left blank, the default is 5.')
-      button.ui.large.button.green.submission(type='submit') Submit
+      button.ui.large.button.green Submit
+
+  .eight.wide.column(style="margin-top: 2em; margin-bottom: 2em;")
+      h2(style="text-align: center;") MetaGPT System results
+      #loading-results.hidden
+        .ui.active.centered.inline.loader
+      #loaded-results.hidden
+        h3(style="text-decoration: underline;") Input
+        h3 prompt: 
+        p#prompt
+        h3 investment: 
+        p#investment
+        h3 n_round: 
+        p#n_round
+        h3(style="text-decoration: underline;") Output
+        #results.hidden
+          h3 Identified Relevant Files:
+          #relevantFiles
+          h3 Recommended Implementation Plan:
+          ol
+            #implementationPlan
+          #steps
+        #no-results.hidden
+          h3#noOutput No Output
 
 block scripts 
   script(src='/public/js/codebaseForm.js')
+
+block styles
+  style.
+    #steps p {
+      white-space: pre;
+    }

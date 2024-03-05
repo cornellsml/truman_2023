@@ -261,24 +261,24 @@ app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(
         title: 'Simulation Content Form'
     })
 });
-app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(req, res) {
-    // // Using child_process.spawn method from child_process module and assign it to variable pythonProcess 
-    // // Parameters passed in spawn - 
-    // // 1. type_of_script - ex. 'python'
-    // // 2. path of the script and arguments for the script
-    const prompt = req.body.prompt || "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: 'How is Jane Done feeling?'. Each prompt was customized by the poster's name.";
-    const investment = req.body.investment || 20.0;
-    const n_round = req.body.n_round || 5;
-    const pythonProcess = spawn('python', ["MetaGPT/code_gen_system.py", prompt, investment, n_round]);
+
+app.get('/generateInterfaceChange', passportConfig.isAuthenticated, function(req, res) {
+    req.setTimeout(300000); // If no response after 5 minutes.
+    // Use child_process.spawn method from child_process module to create a child process and run the python script.
+    // Parameters passed to spawn:
+    //    1. type of script (ex. 'python')
+    //    2. path of the script and arguments for the script
+    console.log(req.query);
+    const pythonProcess = spawn('python', ["MetaGPT/code_gen_system.py", req.query.prompt, req.query.investment, req.query.n_round]);
     let result = "";
 
-    // Takes and append stdout data from script which executed with arguments to result
+    // Take and append stdout data from python script
     pythonProcess.stdout.on('data', (data) => {
         // Do something with the data returned from python script
 
         // const modifiedString = data.toString().replace(/"/g, "'").replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         // result += modifiedString;
-        console.log("DATA from python script: " + data.toString());
+        console.log(data.toString());
         result += data.toString();
     });
 
@@ -292,10 +292,7 @@ app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(re
 
     // In close event, the stream from child process is closed.
     pythonProcess.on('close', function(code) {
-        // Send data to browser.
         result = result.replace(/\r\n/g, ""); // remove new lines
-
-        const prompt = result.substring(0, result.indexOf("PM(ProjectManager):"));
         console.log(result);
 
         const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
@@ -305,9 +302,8 @@ app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(re
         }
 
         console.log(formattedResult);
-        res.render('adminDashboard/codebaseForm_Results', {
-            title: 'Results',
-            prompt: prompt,
+        // Send data to browser.
+        res.send({
             result: formattedResult || []
         })
     });
