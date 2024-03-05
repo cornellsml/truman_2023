@@ -278,6 +278,7 @@ app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(re
 
         // const modifiedString = data.toString().replace(/"/g, "'").replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         // result += modifiedString;
+        console.log("DATA from python script: " + data.toString());
         result += data.toString();
     });
 
@@ -295,6 +296,7 @@ app.post('/generateInterfaceChange', passportConfig.isAuthenticated, function(re
         result = result.replace(/\r\n/g, ""); // remove new lines
 
         const prompt = result.substring(0, result.indexOf("PM(ProjectManager):"));
+        console.log(result);
 
         const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
         let formattedResult = result.match(regex);
