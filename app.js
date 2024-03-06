@@ -234,6 +234,11 @@ app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     })
 });
 
+// TODO: Add a route to a React file 
+app.get('/socialscience/code-gen-2', userController.getLogin) // Adding route to react code-gen interface  "/socialscience/code-gen"
+// Define route to serve React application
+app.use('/socialscience/code-gen', express.static(path.join(__dirname, './views/ai-frontend/build')));
+
 /**
  * Error Handler.
  */
