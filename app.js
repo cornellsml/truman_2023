@@ -291,20 +291,9 @@ app.get('/generateInterfaceChange', passportConfig.isAuthenticated, function(req
 
     // In close event, the stream from child process is closed.
     pythonProcess.on('close', function(code) {
-        console.log("close")
-        result = result.replace(/\r\n/g, ""); // remove new lines
-        console.log("RESULT: " + result);
-
-        const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
-        let formattedResult = result.match(regex);
-        if (formattedResult) {
-            formattedResult = formattedResult.map(result => JSON.parse(result.trim()));
-        }
-
-        console.log(formattedResult);
         // Send data to browser.
         res.send({
-            result: formattedResult || []
+            result: result || []
         })
     });
 });

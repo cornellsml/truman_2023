@@ -28,7 +28,19 @@ $(window).on("load", function() {
 
         // Call MetaGPT system
         $.get("/generateInterfaceChange", { prompt: prompt, investment: investment, n_round: n_round }, function(data) {
-            const result = data["result"];
+            let rawResult = data["result"];
+
+            // Clean data
+            rawResult = rawResult.replace(/\r\n/g, ""); // remove new lines
+
+            const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
+            let result = rawResult.match(regex) || [];
+            if (result) {
+                result = result.map(r => JSON.parse(r.trim()));
+            }
+
+            console.log(result);
+
 
             // Display prompt, investment, round input values.
             $("p#prompt").text(prompt);
