@@ -64,10 +64,10 @@ $(window).on("load", function() {
                         elementToAppend += `<h4> ${step} </h4>`;
                         if (Array.isArray(result[i][step])) {
                             for (const step2 in result[i][step]) {
-                                elementToAppend += `<h4> ${step2} </h4> <p>${result[i][step][step2].replace(/\n/g, "<br/>")}</p>`;
+                                elementToAppend += `<h4> ${step2} </h4> <p>${result[i][step][step2].replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br/>")}</p>`;
                             }
                         } else {
-                            elementToAppend += `<p>${result[i][step].replace(/\n/g, "<br/>")}</p>`;
+                            elementToAppend += `<p>${result[i][step].replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br/>")}</p>`;
                         }
                     }
                     $("#steps").append(elementToAppend);

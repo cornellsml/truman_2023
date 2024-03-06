@@ -278,7 +278,6 @@ app.get('/generateInterfaceChange', passportConfig.isAuthenticated, function(req
 
         // const modifiedString = data.toString().replace(/"/g, "'").replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         // result += modifiedString;
-        console.log(data.toString());
         result += data.toString();
     });
 
@@ -292,8 +291,9 @@ app.get('/generateInterfaceChange', passportConfig.isAuthenticated, function(req
 
     // In close event, the stream from child process is closed.
     pythonProcess.on('close', function(code) {
+        console.log("close")
         result = result.replace(/\r\n/g, ""); // remove new lines
-        console.log(result);
+        console.log("RESULT: " + result);
 
         const regex = /(?<=\[CONTENT\]).*?(?=\[\/CONTENT\])/gm;
         let formattedResult = result.match(regex);
