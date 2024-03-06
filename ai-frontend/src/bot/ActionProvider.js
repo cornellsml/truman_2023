@@ -1,4 +1,7 @@
 // ActionProvider starter code
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY }); // Initialize OpenAI instance
 
 class ActionProvider {
     constructor(
@@ -22,30 +25,14 @@ class ActionProvider {
     }
 
     messageHandlerGpt = async (userInput) => {
-        // Assuming Axios is used for HTTP requests and it's already set up
-        const data = {
-            prompt: userInput,
-            max_tokens: 50,
-            temperature: 0.5,
-        };
+        const completion = await openai.chat.completions.create({
+            messages: [{ role: "user", content: userInput }, { role: "system", content: "You are a helpful assistant." }],
+            model: "gpt-3.5-turbo",
+        });
 
-        try {
-            const response = await axios.post('https://api.openai.com/v4/completions', data, {
-                headers: {
-                    'Authorization': `Bearer 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`
-                }
-            });
-            const openAiResponse = response.data.choices[0].text.trim();
-            const message = this.createChatBotMessage(openAiResponse);
-            this.setChatbotMessage(message);
-        } catch (error) {
-            console.error('Error calling OpenAI:', error);
-            // Handle errors or unsuccessful API calls
-            const errorMessage = this.createChatBotMessage("Sorry, I couldn't process that request.");
-            this.setChatbotMessage(errorMessage);
-        }
+        const message = this.createChatBotMessage(completion.choices[0].message.content);
+        this.setChatbotMessage(message);
     }
-
 
     messageHandlerNoGpt = () => {
         const message = this.createChatBotMessage("Hello. Maybe one day I won't use ChatGPT but for now, it's all I got! 😔😔")
@@ -55,7 +42,14 @@ class ActionProvider {
     setChatbotMessage = (message) => {
         this.setState(state => ({ ...state, messages: [...state.messages, message]} ))
     }
-    }
 
-    export default ActionProvider;
+    handleApiFailure = () => {
+        // Define a default message for when the API call fails
+        const errorMessage = this.createChatBotMessage("I'm sorry, but I'm currently unable to fetch a response. Please try again later.");
+        this.setChatbotMessage(errorMessage);
+    }
+}
+
+export default ActionProvider;
+
  
