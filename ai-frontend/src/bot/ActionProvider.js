@@ -1,7 +1,7 @@
 // ActionProvider starter code
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY }); // Initialize OpenAI instance
+const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY,dangerouslyAllowBrowser: true }); // Initialize OpenAI instance
 
 class ActionProvider {
     constructor(
