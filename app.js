@@ -270,3 +270,7 @@ app.listen(app.get('port'), () => {
     console.log('  Press CTRL-C to stop\n');
 });
 module.exports = app;
+
+
+// Add this line to serve your React app (assuming the build output is in public/ai-frontend/build)
+app.use('/ai-frontend', express.static(path.join(__dirname, 'public/ai-frontend/build')));

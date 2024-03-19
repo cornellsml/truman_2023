@@ -30,3 +30,12 @@ html
       .ui.grid.container#pagecontainer
         include partials/ui_flash
         block content
+          #chatbotPopup(style='display:none; position:fixed; right:20px; bottom:20px; z-index:1000; background-color: #fff; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,.2); border-radius: 5px; overflow: hidden;')
+            iframe(src='/ai-frontend' width='350' height='600')
+            button(onclick="document.getElementById('chatbotPopup').style.display='none'") Close
+
+    script.
+      document.addEventListener('dblclick', function() {
+        console.log('Double-click detected. Displaying the chatbot popup.'); // Debugging statement to confirm the double-click event
+        document.getElementById('chatbotPopup').style.display = 'block';
+      });
