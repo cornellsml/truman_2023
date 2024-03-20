@@ -18,6 +18,8 @@ const schedule = require('node-schedule');
 const multer = require('multer');
 const fs = require('fs');
 const util = require('util');
+
+
 fs.readFileAsync = util.promisify(fs.readFile);
 
 /**
@@ -65,6 +67,12 @@ const passportConfig = require('./config/passport');
  * Create Express server.
  */
 const app = express();
+
+/*add chatbot*/
+app.get('/chatbot', (req, res) => {
+    res.redirect('http://localhost:3001');
+});
+
 
 /**
  * Connect to MongoDB.
