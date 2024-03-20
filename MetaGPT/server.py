@@ -13,7 +13,7 @@ CORS(app)
 def index():
     return "Hello TrumanAI Server"
 
-@app.route('/query', methods=['POST'])
+@app.route('/code-gen', methods=['POST'])
 def get_query():
     #responses
     status = ""
