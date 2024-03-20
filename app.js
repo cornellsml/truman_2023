@@ -18,6 +18,8 @@ const schedule = require('node-schedule');
 const multer = require('multer');
 const fs = require('fs');
 const util = require('util');
+
+
 fs.readFileAsync = util.promisify(fs.readFile);
 
 /**
@@ -65,6 +67,12 @@ const passportConfig = require('./config/passport');
  * Create Express server.
  */
 const app = express();
+
+/*add chatbot*/
+app.get('/chatbot', (req, res) => {
+    res.redirect('http://localhost:3001');
+});
+
 
 /**
  * Connect to MongoDB.
@@ -198,8 +206,6 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
 
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
-app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
-
 app.get('/notifications', passportConfig.isAuthenticated, notificationController.getNotifications);
 
 app.get('/login', userController.getLogin);
@@ -223,7 +229,6 @@ app.post('/account/consent', passportConfig.isAuthenticated, userController.post
 app.get('/me', passportConfig.isAuthenticated, userController.getMe);
 app.get('/user/:userId', passportConfig.isAuthenticated, actorsController.getActor);
 app.post('/user', passportConfig.isAuthenticated, actorsController.postBlockReportOrFollow);
-app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors)
 
 app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
 app.post('/feed', passportConfig.isAuthenticated, scriptController.postUpdateFeedAction);
@@ -234,10 +239,28 @@ app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     })
 });
 
-// TODO: Add a route to a React file 
-app.get('/socialscience/code-gen-2', userController.getLogin) // Adding route to react code-gen interface  "/socialscience/code-gen"
-// Define route to serve React application
-app.use('/socialscience/code-gen', express.static(path.join(__dirname, './views/ai-frontend/build')));
+
+/**
+ * Administrator-only routes.
+ */
+app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
+app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors);
+app.get('/admin', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/adminHomePage', {
+        title: 'Admin Home'
+    })
+});
+app.get('/simulationContent', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/simulationForm', {
+        title: 'Simulation Content Form'
+    })
+});
+app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/simulationForm', {
+        title: 'Simulation Content Form'
+    })
+});
+
 
 /**
  * Error Handler.
@@ -270,7 +293,3 @@ app.listen(app.get('port'), () => {
     console.log('  Press CTRL-C to stop\n');
 });
 module.exports = app;
-
-
-// Add this line to serve your React app (assuming the build output is in public/ai-frontend/build)
-app.use('/ai-frontend', express.static(path.join(__dirname, 'public/ai-frontend/build')));
