@@ -190,7 +190,7 @@ async def main(
 
     team.invest(investment=investment)
     team.start_project(msg)
-    await team.run(n_round=n_round)
+    return await team.run(n_round=n_round)
 
 if __name__ == '__main__':
     fire.Fire(main)
