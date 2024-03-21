@@ -24,12 +24,24 @@ class ActionProvider {
         const message = this.createChatBotMessage("Hello!")
         this.setChatbotMessage(message)
     }
-    messageHandlerTruman = async () => {
-        const message = this.createChatBotMessage("Sure, I can help by updating the code base with your desired changes.")
-        this.setChatbotMessage(message)
+
+    metaGptHandler = async (params) => {
+        let postBody = {}
+        if (params) {
+            console.log("params is true")
+            postBody = JSON.stringify(
+                {   
+                    message: this.stateRef.trumanCodeGenData.message, 
+                    investment: this.stateRef.trumanCodeGenData.investment, 
+                    n_round: this.stateRef.trumanCodeGenData.n_rounds
+                }
+            )
+        }
+        console.log(postBody)
         let api_response = ""
         console.log("running API")
-        await axios.post("http://localhost:5000/code-gen", {})
+        // TODO: set post data
+        await axios.post("http://localhost:5000/code-gen", postBody, {headers: {'Content-Type': 'application/json'}})
         .then(resp => {
             api_response = resp.data
             console.log(api_response);
@@ -50,29 +62,89 @@ class ActionProvider {
             this.setChatbotMessage(message_status)
         }
         console.log(api_response.response)
+        this.resetTrumanState()
+
         const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you")
         this.setChatbotMessage(message2)
     }
 
-    messageHandlerGpt = async (userInput) => {
-        const completion = await openai.chat.completions.create({
-            messages: [{ role: "user", content: userInput }, { role: "system", content: "You are a helpful assistant." }],
-            model: "gpt-3.5-turbo",
-        });
+    sequenceHandlerTruman = (prompt, userMessage = "", invest = true, rounds = true) => {
+        console.log(this.stateRef)
+        if (!prompt) {
+            // no prompt (run defaults)
+            const message = this.createChatBotMessage("Sure, I can help by updating the Truman codebase. This may take a moment.")
+            this.setChatbotMessage(message)
+            this.metaGptHandler(false)
+        }
+        else {
+            if (this.stateRef.trumanCodeGenSequence == false) {
+                // initial sequence launch, prompt msg
+                this.stateRef.trumanCodeGenSequence = true
+                const message = this.createChatBotMessage("Sure, I can help by updating the Truman codebase with your desired changes.")
+                this.setChatbotMessage(message)
+                const message_2 = this.createChatBotMessage('What would you like me to change?');
+                this.setChatbotMessage(message_2)
+            }
+            else if (this.stateRef.trumanCodeGenData.message == null){
+                // received msg, prompt investment
+                this.stateRef.trumanCodeGenData.message = userMessage
+                console.log(this.stateRef)
+                const message = this.createChatBotMessage('If you would like to set an investment, please tell me an amount');
+                this.setChatbotMessage(message)
+            }
+            else if (this.stateRef.trumanCodeGenData.investment == null){
+                // received investment, prompt rounds
+                if (invest) { // TODO: check if int-able
+                    this.stateRef.trumanCodeGenData.investment = parseFloat(userMessage.trim())
+                }
+                else {
+                    this.stateRef.trumanCodeGenData.investment = 20.0
+                }
+                console.log(this.stateRef)
+                const message = this.createChatBotMessage('If you would like to set the number of rounds, please tell me an amount');
+                this.setChatbotMessage(message)
+            }
+            else if (this.stateRef.trumanCodeGenData.n_rounds == null & invest == null){
+                // received rounds, run metagpt
+                if (rounds) { //TODO: check if int-able
+                    this.stateRef.trumanCodeGenData.n_rounds = parseInt(userMessage.trim())
+                }
+                else {
+                    this.stateRef.trumanCodeGenData.n_rounds = 5
+                }
+                const message = this.createChatBotMessage('Running your request changes! This may take a moment');
+                this.setChatbotMessage(message)
+                console.log(this.stateRef)
+                this.metaGptHandler(true)
+            }
+        }
+    }
 
-        const message = this.createChatBotMessage(completion.choices[0].message.content);
-        this.setChatbotMessage(message);
+    resetTrumanState = () => {
+        this.stateRef.trumanCodeGenSequence = false
+        this.stateRef.trumanCodeGenData.message = null
+        this.stateRef.trumanCodeGenData.investment = null
+        this.stateRef.trumanCodeGenData.n_round = null
+    }
+
+    messageHandlerGpt = async (userInput) => {
+        try {
+            const completion = await openai.chat.completions.create({
+                messages: [{ role: "user", content: userInput }, { role: "system", content: "You are a helpful assistant." }],
+                model: "gpt-3.5-turbo",
+            });
+            const message = this.createChatBotMessage(completion.choices[0].message.content);
+            this.setChatbotMessage(message);
+        }
+        catch (error) {
+            console.error(error);
+            const message = this.createChatBotMessage("Uh Oh something went wrong. Please try again later")
+            this.setChatbotMessage(message);
+        }
     }
 
     setChatbotMessage = (message) => {
-        console.log("Message : ", message );
-        this.setState(state => ({ ...state, messages: [...state.messages, message]}) )
-    }
-
-    handleApiFailure = () => {
-        // Define a default message for when the API call fails
-        const errorMessage = this.createChatBotMessage("I'm sorry, but I'm currently unable to fetch a response. Please try again later.");
-        this.setChatbotMessage(errorMessage);
+        this.setState(state => ({ ...this.stateRef, messages: [...state.messages, message]}) )
     }
 
     //TODO create sequence 
