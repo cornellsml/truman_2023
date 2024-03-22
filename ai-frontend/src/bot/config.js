@@ -14,6 +14,14 @@ const config = {
             delay: 700,
         })
     ],
+    state: {
+        trumanCodeGenSequence: false,
+        trumanCodeGenData: {
+            message: null,
+            investment: null,
+            n_rounds: null
+        }
+      },
     customComponents: {
         botAvatar: (props) => <BotAvatar {...props}/>
     }
