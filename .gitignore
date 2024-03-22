@@ -38,3 +38,6 @@ bower_components
 # OS metadata
 .DS_Store
 Thumbs.db
+
+#py-caches
+*.pyc
