@@ -112,7 +112,7 @@ class ActionProvider {
                 else {
                     this.stateRef.trumanCodeGenData.n_rounds = 5
                 }
-                const message = this.createChatBotMessage('Running your request changes! This may take a moment');
+                const message = this.createChatBotMessage('Running your requested changes! This may take a moment');
                 this.setChatbotMessage(message)
                 console.log(this.stateRef)
                 this.metaGptHandler(true)
@@ -124,7 +124,7 @@ class ActionProvider {
         this.stateRef.trumanCodeGenSequence = false
         this.stateRef.trumanCodeGenData.message = null
         this.stateRef.trumanCodeGenData.investment = null
-        this.stateRef.trumanCodeGenData.n_round = null
+        this.stateRef.trumanCodeGenData.n_rounds = null
     }
 
     messageHandlerGpt = async (userInput) => {
@@ -146,17 +146,6 @@ class ActionProvider {
     setChatbotMessage = (message) => {
         this.setState(state => ({ ...this.stateRef, messages: [...state.messages, message]}) )
     }
-
-    //TODO create sequence 
-        // User: change code
-        // ai: sure what would you like to change
-        // User: msg or none
-        // ai: sure any specific investment
-        // User: number or none
-        // ai: Would you like to specify how many rounds?
-        // User: number or none
-        // ai: (make api request)
-    // TODO: add waiting message ... while api loads
 
 }
 

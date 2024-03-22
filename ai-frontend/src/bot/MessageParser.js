@@ -13,7 +13,7 @@ class MessageParser {
         }
         else {
             const lowerMsg = message.toLowerCase();
-            if (lowerMsg.includes("truman") && lowerMsg.includes("no prompt")) {
+            if (lowerMsg.includes("truman") && (lowerMsg.includes("no prompt") || lowerMsg.includes("example prompt"))) {
                 // launch truman sequence
                 this.actionProvider.sequenceHandlerTruman(false);
             }
@@ -43,7 +43,7 @@ class MessageParser {
             }
             this.actionProvider.sequenceHandlerTruman(true, message, true, null);
         }
-        else if (this.state.trumanCodeGenData.n_round == null) {
+        else if (this.state.trumanCodeGenData.n_rounds == null) {
             //prompt n_round
             if (lowerMsg.includes("no") || lowerMsg.includes("none")) {
                 this.actionProvider.sequenceHandlerTruman(true, message, null, false);
