@@ -1,0 +1,20 @@
+extends ../ui_layout
+ 
+block content
+  #loading.sixteen.wide.column
+    img.ui.centered.small.image(src='/public/heart.svg')
+  #content.sixteen.wide.column.hidden
+    h2(style="text-align: center;") All actors in simulation
+    .ui.five.stackable.cards
+      for actor in actors
+        .ui.fluid.card
+          .img.image
+            img(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+actor.profile.picture)
+          .content
+            a(href='/user/'+actor.username).header= actor.profile.name
+            .meta="@"+actor.username
+            .description(style='white-space: pre-wrap')=actor.profile.bio
+            .description(style="margin-top: 5px;")
+              if actor.profile.location
+                i.marker.icon
+                span=actor.profile.location
