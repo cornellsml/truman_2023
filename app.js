@@ -68,12 +68,6 @@ const passportConfig = require('./config/passport');
  */
 const app = express();
 
-/*add chatbot*/
-app.get('/chatbot', (req, res) => {
-    res.redirect('http://localhost:3001');
-});
-
-
 /**
  * Connect to MongoDB.
  */
@@ -181,6 +175,11 @@ app.use(express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 })
 app.use('/post_pictures', express.static(path.join(__dirname, 'post_pictures'), { maxAge: 31557600000 }));
 app.use('/profile_pictures', express.static(path.join(__dirname, 'profile_pictures'), { maxAge: 31557600000 }));
 
+// Serve static files from the build directory of your React.js application
+app.use(express.static(path.join(__dirname, 'ai-frontend', 'build'), { maxAge: 31557600000 }));
+// Serve static files from the build directory of your React.js application
+app.use('/static', express.static(path.join(__dirname, 'ai-frontend', 'build', 'static')));
+
 /**
  * Primary app routes.
  */
@@ -255,12 +254,28 @@ app.get('/simulationContent', passportConfig.isAuthenticated, function(req, res)
         title: 'Simulation Content Form'
     })
 });
-app.post('/generateSimulationContent', passportConfig.isAuthenticated, function(req, res) {
-    res.render('adminDashboard/simulationForm', {
-        title: 'Simulation Content Form'
+
+// Define a route to serve your React.js application
+app.get('/chatbot', passportConfig.isAuthenticated, function(req, res) {
+    // res.render('adminDashboard/codebaseForm', {
+    //     title: 'Making Changes to the Interface'
+    // })
+    res.sendFile(path.join(__dirname, 'ai-frontend', 'build', 'index.html'));
+});
+
+// Alternative 1: Display interface. On the interface, open popup to route /interfaceForm
+app.get('/interfaceForm', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/codebaseForm', {
+        title: 'Making Changes to the Interface'
     })
 });
 
+// Alternative 2: Display chatbot as a component on the interface. (TO DO)
+app.get('/interfaceForm2', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/codebaseForm2', {
+        title: 'Making Changes to the Interface'
+    })
+});
 
 /**
  * Error Handler.
