@@ -1,12 +1,12 @@
 const passport = require('passport');
 const validator = require('validator');
 const dotenv = require('dotenv');
-dotenv.config({ path: '.env' });
+dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
 const User = require('../models/User');
 
 /**
  * GET /login
- * Login page.
+ * Render the login page.
  */
 exports.getLogin = (req, res) => {
     if (req.user) {
@@ -20,7 +20,7 @@ exports.getLogin = (req, res) => {
 
 /**
  * POST /login
- * Sign in using email and password.
+ * Handles user sign in using email and password.
  */
 exports.postLogin = (req, res, next) => {
     const validationErrors = [];
@@ -33,8 +33,8 @@ exports.postLogin = (req, res, next) => {
     }
     req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
     passport.authenticate('local', (err, user, info) => {
-        const study_length = 86400000 * process.env.NUM_DAYS; //Milliseconds in NUM_DAYS days
-        const time_diff = Date.now() - user.createdAt; //Time difference between now and account creation.
+        const study_length = 86400000 * process.env.NUM_DAYS; // Milliseconds in NUM_DAYS days
+        const time_diff = Date.now() - user.createdAt; // Time difference between now and account creation.
         if (err) { return next(err); }
         if (!user) {
             req.flash('errors', info);
@@ -66,7 +66,7 @@ exports.postLogin = (req, res, next) => {
 
 /**
  * GET /logout
- * Log out.
+ * Handles user log out.
  */
 exports.logout = (req, res) => {
     req.logout((err) => {
@@ -81,7 +81,7 @@ exports.logout = (req, res) => {
 
 /**
  * GET /signup
- * Signup page.
+ * Render the signup page.
  */
 exports.getSignup = (req, res) => {
     if (req.user) {
@@ -94,7 +94,7 @@ exports.getSignup = (req, res) => {
 
 /**
  * POST /signup
- * Create a new local account.
+ * Handles user sign up and creation of a new account.
  */
 exports.postSignup = async(req, res, next) => {
     const validationErrors = [];
@@ -150,7 +150,7 @@ exports.postSignup = async(req, res, next) => {
 
 /**
  * POST /account/profile
- * Update profile information.
+ * Update user's profile information during the sign up process.
  */
 exports.postSignupInfo = async(req, res, next) => {
     try {
@@ -172,7 +172,7 @@ exports.postSignupInfo = async(req, res, next) => {
 
 /**
  * POST /account/consent
- * Update consent.
+ * Update user's consent.
  */
 exports.postConsent = async(req, res, next) => {
     try {
@@ -188,7 +188,7 @@ exports.postConsent = async(req, res, next) => {
 
 /**
  * GET /account
- * Profile page.
+ * Render user's Update My Profile page.
  */
 exports.getAccount = (req, res) => {
     res.render('account/profile', {
@@ -198,7 +198,7 @@ exports.getAccount = (req, res) => {
 
 /**
  * GET /me
- * Profile page.
+ * Render user's profile page.
  */
 exports.getMe = async(req, res) => {
     try {
@@ -212,7 +212,7 @@ exports.getMe = async(req, res) => {
 
 /**
  * POST /account/profile
- * Update profile information.
+ * Update user's profile information.
  */
 exports.postUpdateProfile = async(req, res, next) => {
     const validationErrors = [];
@@ -246,7 +246,7 @@ exports.postUpdateProfile = async(req, res, next) => {
 
 /**
  * POST /account/password
- * Update current password.
+ * Update user's current password.
  */
 exports.postUpdatePassword = async(req, res, next) => {
     const validationErrors = [];
@@ -270,7 +270,7 @@ exports.postUpdatePassword = async(req, res, next) => {
 
 /**
  * POST /pageLog
- * Post a pageLog
+ * Record user's page visit to pageLog.
  */
 exports.postPageLog = async(req, res, next) => {
     try {
@@ -285,14 +285,14 @@ exports.postPageLog = async(req, res, next) => {
 
 /**
  * POST /pageTimes
- * Post a pageTime
+ * Record user's time on site to pageTimes.
  */
 exports.postPageTime = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
         // What day in the study is the user in? 
-        const one_day = 86400000; //number of milliseconds in a day
-        const time_diff = Date.now() - user.createdAt; //Time difference between now and account creation.
+        const one_day = 86400000; // number of milliseconds in a day
+        const time_diff = Date.now() - user.createdAt; // Time difference between now and account creation.
         const current_day = Math.floor(time_diff / one_day);
         user.pageTimes[current_day] += parseInt(req.body.time);
         await user.save();
@@ -305,7 +305,7 @@ exports.postPageTime = async(req, res, next) => {
 
 /**
  * GET /forgot
- * Forgot Password page.
+ * Render Forgot Password page.
  */
 exports.getForgot = (req, res) => {
     if (req.isAuthenticated()) {
@@ -324,8 +324,8 @@ exports.stillActive = async() => {
     try {
         const activeUsers = await User.find().where('active').equals(true).exec();
         for (const user of activeUsers) {
-            const study_length = 86400000 * process.env.NUM_DAYS; //Milliseconds in NUM_DAYS days
-            const time_diff = Date.now() - user.createdAt; //Time difference between now and account creation.
+            const study_length = 86400000 * process.env.NUM_DAYS; // Milliseconds in NUM_DAYS days
+            const time_diff = Date.now() - user.createdAt; // Time difference between now and account creation.
             if ((time_diff >= study_length) && !user.isAdmin) {
                 user.active = false;
                 user.logPostStats();
@@ -339,7 +339,7 @@ exports.stillActive = async() => {
 
 /**
  * GET /completed
- * Admin Dashboard: Basic information on users currrently in the study
+ * Render Admin Dashboard: Basic information on users currrently in the study
  */
 exports.userTestResults = async(req, res) => {
     if (!req.user.isAdmin) {
@@ -348,8 +348,8 @@ exports.userTestResults = async(req, res) => {
         try {
             const users = await User.find().where('isAdmin').equals(false).exec();
             for (const user of users) {
-                const study_length = 86400000 * process.env.NUM_DAYS; //Milliseconds in NUM_DAYS days
-                const time_diff = Date.now() - user.createdAt; //Time difference between now and account creation.
+                const study_length = 86400000 * process.env.NUM_DAYS; // Milliseconds in NUM_DAYS days
+                const time_diff = Date.now() - user.createdAt; // Time difference between now and account creation.
                 if ((time_diff >= study_length) && !user.isAdmin) {
                     user.active = false;
                     user.logPostStats();

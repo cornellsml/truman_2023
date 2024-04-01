@@ -1,5 +1,5 @@
 $(window).on("load", function() {
-    //Button to go to feed
+    // Button to go to feed
     $('.ui.home.inverted.button').on('click', function() {
         window.location.href = '/';
     });
@@ -8,7 +8,7 @@ $(window).on("load", function() {
         allowMultiple: false
     });
 
-    //REPORT Actor Modal #1
+    // REPORT Actor Modal #1
     $('.ui.small.report.modal')
         .modal({
             onHidden: function(e) {
@@ -17,7 +17,7 @@ $(window).on("load", function() {
                 });
                 $(".ui.small.report.modal input.ui.green.button").addClass('disabled');
                 if (isBlocked) {
-                    //Modal for Blocked Users
+                    // Modal for Blocked Users
                     $('.ui.small.basic.blocked.modal').modal('show');
                 }
             },
@@ -28,31 +28,31 @@ $(window).on("load", function() {
             }
         });
 
-    //REPORT Actor Modal #2
+    // REPORT Actor Modal #2
     $('.second.modal').modal({
         closable: false,
         onVisible: function() {
-            //Modal for Blocked Users
+            // Modal for Blocked Users
             $('.second.modal').modal('hide others');
         },
         onHidden: function(modal) {
             if (isBlocked) {
-                //Modal for Blocked Users
+                // Modal for Blocked Users
                 $('.ui.small.basic.blocked.modal').modal('show');
             }
         }
     });
 
-    //BLOCK Actor Modal
+    // BLOCK Actor Modal
     $('.ui.small.basic.blocked.modal')
         .modal({
             allowMultiple: false,
             closable: false,
             onDeny: function() {
-                //report user
+                // report user
             },
             onApprove: function() {
-                //unblock user
+                // unblock user
                 const username = $('button.ui.button.block').attr("username");
                 $.post("/user", { unblocked: username, _csrf: $('meta[name="csrf-token"]').attr('content') })
                     .then(function() {
@@ -67,13 +67,13 @@ $(window).on("load", function() {
     // attach events to buttons: open report modal with blocked modal button
     $('.report.modal').modal('attach events', '.blocked.modal .red.button', 'show');
 
-    //REPORT Actor button
+    // REPORT Actor button
     $('.ui.button.report').on('click', function() {
         // show first modal
         $('.ui.small.report.modal').modal('show');
     });
 
-    //REPORT Actor Form
+    // REPORT Actor Form
     $('form#reportform').submit(function(e) {
         e.preventDefault();
         isReported = true;
@@ -82,19 +82,19 @@ $(window).on("load", function() {
         });
     });
 
-    //BLOCK Actor button
+    // BLOCK Actor button
     $('button.ui.button.block').on('click', function() {
         const username = $(this).attr("username");
         isBlocked = true;
         $.post("/user", { blocked: username, _csrf: $('meta[name="csrf-token"]').attr('content') });
 
-        //Modal for Blocked Users
+        // Modal for Blocked Users
         $('.ui.small.basic.blocked.modal').modal('show');
     });
 
-    //Actor is already blocked
+    // Actor is already blocked
     if (isBlocked) {
-        //Modal for Blocked Users
+        // Modal for Blocked Users
         $('.ui.small.basic.blocked.modal').modal('show');
     }
 });

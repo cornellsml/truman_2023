@@ -6,7 +6,9 @@ const _ = require('lodash');
 
 /**
  * GET /notifications, /getBell
- * List of notifications to display
+ * Fetch all relevant notifications. 
+ * If query parameter 'bell' is true, return the number of new/ unseen notifications.
+ * If it is false, render the notifications page.
  */
 exports.getNotifications = async(req, res) => {
     try {
@@ -180,7 +182,7 @@ exports.getNotifications = async(req, res) => {
                         }
                     }
                 }
-            } //end of for FOR LOOP
+            }
 
             final_notify.sort(function(a, b) {
                 return b.time - a.time;

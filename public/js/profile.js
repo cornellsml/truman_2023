@@ -51,7 +51,7 @@ $(window).on("load", function() {
         }
     };
 
-    //Sign Up FORM Button: Form validation to make Sign Up button green
+    // Sign Up FORM Button: Form validation to make Sign Up button green
     $('form[id="signup-form"] input[required]').on('input', function() {
         enableSaveBtn();
     });
@@ -59,7 +59,7 @@ $(window).on("load", function() {
         enableSaveBtn();
     });
 
-    //Update Profile and Password FORM: Form validation
+    // Update Profile and Password FORM: Form validation
     $('form[id="profile"] input').on('input', function() {
         $('form[id="profile"] button').removeClass('disabled').addClass('green');
     });

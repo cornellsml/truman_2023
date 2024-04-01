@@ -1,4 +1,4 @@
-The Truman Platform 
+The Truman Platform 2.0
 =======================
 _Updated version of The Truman Platform https://github.com/cornellsml/truman_ 
 

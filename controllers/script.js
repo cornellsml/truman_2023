@@ -4,24 +4,24 @@ const Notification = require('../models/Notification');
 const helpers = require('./helpers');
 const _ = require('lodash');
 const dotenv = require('dotenv');
-dotenv.config({ path: '.env' });
+dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
 
 /**
  * GET /
- * Get list of posts for feed
+ * Fetch and render newsfeed.
  */
 exports.getScript = async(req, res, next) => {
     try {
-        const one_day = 86400000; //Number of milliseconds in a day
-        const time_now = Date.now(); //Current date
-        const time_diff = time_now - req.user.createdAt; //Time difference between now and user account creation.
-        const time_limit = time_diff - one_day; //Variable used later to show posts only in the past 24 hours
+        const one_day = 86400000; // Number of milliseconds in a day.
+        const time_now = Date.now(); // Current date.
+        const time_diff = time_now - req.user.createdAt; // Time difference between now and user account creation, in milliseconds.
+        const time_limit = time_diff - one_day; // Date in milliseconds 24 hours ago from now. This is used later to show posts only in the past 24 hours.
 
         const user = await User.findById(req.user.id)
             .populate('posts.comments.actor')
             .exec();
 
-        //User is no longer active
+        // If the user is no longer active, sign the user out.
         if (!user.active) {
             req.logout((err) => {
                 if (err) console.log('Error : Failed to logout.', err);
@@ -34,14 +34,14 @@ exports.getScript = async(req, res, next) => {
             });
         }
 
-        //What day in the study is the user in? 
-        //Update study_days, which tracks the number of time user views feed.
+        // What day in the study is the user in? 
+        // Update study_days, which tracks the number of time user views feed.
         const current_day = Math.floor(time_diff / one_day);
         if (current_day < process.env.NUM_DAYS) {
             user.study_days[current_day] += 1;
         }
 
-        //Get the newsfeed
+        // Array of actor posts that match the user's experimental condition, within the past 24 hours, sorted by descending time. 
         let script_feed = await Script.find({
                 class: { "$in": ["", user.experimentalCondition] }
             })
@@ -51,12 +51,13 @@ exports.getScript = async(req, res, next) => {
             .populate('comments.actor')
             .exec();
 
-        //Array of any user-made posts within the past 24 hours, sorted by time they were created.
+        // Array of any user-made posts within the past 24 hours, sorted by time they were created.
         let user_posts = user.getPostInPeriod(time_limit, time_diff);
         user_posts.sort(function(a, b) {
             return b.relativeTime - a.relativeTime;
         });
 
+        // Get the newsfeed and render it.
         const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, true);
         console.log("Script Size is now: " + finalfeed.length);
         await user.save();
@@ -65,19 +66,19 @@ exports.getScript = async(req, res, next) => {
         next(err);
     }
 };
+
 /*
  * Post /post/new
- * Add new user post, including actor replies (comments) that go along with it.
+ * Record a new user-made post. Include any actor replies (comments) that go along with it.
  */
 exports.newPost = async(req, res) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        //This is a new post
         if (req.file) {
-            user.numPosts = user.numPosts + 1; //begins at 0
+            user.numPosts = user.numPosts + 1; // Count begins at 0
             const currDate = Date.now();
 
-            var post = {
+            let post = {
                 type: "user_post",
                 postID: user.numPosts,
                 body: req.body.body,
@@ -89,17 +90,16 @@ exports.newPost = async(req, res) => {
                 relativeTime: currDate - user.createdAt,
             };
 
-            //Now we find any Actor Replies (Comments) that go along with it
+            // Find any Actor replies (comments) that go along with this post
             const actor_replies = await Notification.find()
                 .where('userPostID').equals(post.postID)
                 .where('notificationType').equals('reply')
                 .populate('actor').exec();
 
+            // If there are Actor replies (comments) that go along with this post, add them to the user's post.
             if (actor_replies.length > 0) {
-                //we have a actor reply that goes with this userPost
-                //add them to the posts array
                 for (const reply of actor_replies) {
-                    user.numActorReplies = user.numActorReplies + 1; //begins at 0
+                    user.numActorReplies = user.numActorReplies + 1; // Count begins at 0
                     const tmp_actor_reply = {
                         actor: reply.actor._id,
                         body: reply.replyBody,
@@ -114,7 +114,7 @@ exports.newPost = async(req, res) => {
                     post.comments.push(tmp_actor_reply);
                 }
             }
-            user.posts.unshift(post); //adds elements to the beginning of the array
+            user.posts.unshift(post); // Add most recent user-made post to the beginning of the array
             await user.save();
             res.redirect('/');
         } else {
@@ -128,23 +128,24 @@ exports.newPost = async(req, res) => {
 
 /**
  * POST /feed/
- * Update user's actions on ACTOR posts. 
+ * Record user's actions on ACTOR posts. 
  */
 exports.postUpdateFeedAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        //Find the object from the right post in feed
+        // Check if user has interacted with the post before.
         let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post == req.body.postID; });
 
+        // If the user has not interacted with the post before, add the post to user.feedAction.
         if (feedIndex == -1) {
             const cat = {
                 post: req.body.postID,
                 postClass: req.body.postClass,
             };
-            // add new post into correct location
             feedIndex = user.feedAction.push(cat) - 1;
         }
-        //create a new Comment
+
+        // User created a new comment on the post.
         if (req.body.new_comment) {
             user.numComments = user.numComments + 1;
             const cat = {
@@ -158,11 +159,11 @@ exports.postUpdateFeedAction = async(req, res, next) => {
             }
             user.feedAction[feedIndex].comments.push(cat);
         }
-
-        //Are we doing anything with a comment?
+        // User interacted with a comment on the post.
         else if (req.body.commentID) {
             const isUserComment = (req.body.isUserComment == 'true');
-            var commentIndex = (isUserComment) ?
+            // Check if user has interacted with the comment before.
+            let commentIndex = (isUserComment) ?
                 _.findIndex(user.feedAction[feedIndex].comments, function(o) {
                     return o.new_comment_id == req.body.commentID && o.new_comment == isUserComment
                 }) :
@@ -170,7 +171,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                     return o.comment == req.body.commentID && o.new_comment == isUserComment
                 });
 
-            //no comment in this post-actions yet
+            // If the user has not interacted with the comment before, add the comment to user.feedAction[feedIndex].comments
             if (commentIndex == -1) {
                 const cat = {
                     comment: req.body.commentID
@@ -179,7 +180,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 commentIndex = user.feedAction[feedIndex].comments.length - 1;
             }
 
-            //LIKE A COMMENT
+            // User liked the comment.
             if (req.body.like) {
                 const like = req.body.like;
                 user.feedAction[feedIndex].comments[commentIndex].likeTime.push(like);
@@ -187,7 +188,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 if (req.body.isUserComment != 'true') user.numCommentLikes++;
             }
 
-            //UNLIKE A COMMENT
+            // User unliked the comment.
             if (req.body.unlike) {
                 const unlike = req.body.unlike;
                 user.feedAction[feedIndex].comments[commentIndex].unlikeTime.push(unlike);
@@ -195,37 +196,37 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 if (req.body.isUserComment != 'true') user.numCommentLikes--;
             }
 
-            //FLAG A COMMENT
+            // User flagged the comment.
             else if (req.body.flag) {
                 const flag = req.body.flag;
                 user.feedAction[feedIndex].comments[commentIndex].flagTime.push(flag);
                 user.feedAction[feedIndex].comments[commentIndex].flagged = true;
             }
         }
-        //Not a comment-- Are we doing anything with the post?
+        // User interacted with the post.
         else {
-            //Flag event
+            // User flagged the post.
             if (req.body.flag) {
                 const flag = req.body.flag;
                 user.feedAction[feedIndex].flagTime = [flag];
                 user.feedAction[feedIndex].flagged = true;
             }
 
-            //Like event
+            // User liked the post.
             else if (req.body.like) {
                 const like = req.body.like;
                 user.feedAction[feedIndex].likeTime.push(like);
                 user.feedAction[feedIndex].liked = true;
                 user.numPostLikes++;
             }
-            //Unlike event
+            // User unliked the post.
             else if (req.body.unlike) {
                 const unlike = req.body.unlike;
                 user.feedAction[feedIndex].unlikeTime.push(unlike);
                 user.feedAction[feedIndex].liked = false;
                 user.numPostLikes--;
             }
-            //Read event 
+            // User read the post.
             else if (req.body.viewed) {
                 const view = req.body.viewed;
                 user.feedAction[feedIndex].readTime.push(view);
@@ -235,7 +236,6 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 console.log('Something in feedAction went crazy. You should never see this.');
             }
         }
-
         await user.save();
         res.send({ result: "success", numComments: user.numComments });
     } catch (err) {
@@ -245,22 +245,23 @@ exports.postUpdateFeedAction = async(req, res, next) => {
 
 /**
  * POST /userPost_feed/
- * Update user's actions on USER posts. 
+ * Record user's actions on USER posts. 
  */
 exports.postUpdateUserPostFeedAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        //Find the index of object in user posts
+        // Find the index of object in user.posts
         let feedIndex = _.findIndex(user.posts, function(o) { return o.postID == req.body.postID; });
 
         if (feedIndex == -1) {
             // Should not happen.
-        } // Add a new comment
+        }
+        // User created a new comment on the post.
         else if (req.body.new_comment) {
             user.numComments = user.numComments + 1;
             const cat = {
                 body: req.body.comment_text,
-                commentID: user.numComments, // not sure if it needs to be added to 900
+                commentID: user.numComments,
                 relativeTime: req.body.new_comment - user.createdAt,
                 absTime: req.body.new_comment,
                 new_comment: true,
@@ -269,32 +270,35 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
                 likes: 0
             };
             user.posts[feedIndex].comments.push(cat);
-        } //Are we doing anything with a comment?
+        }
+        // User interacted with a comment on the post.
         else if (req.body.commentID) {
             const commentIndex = _.findIndex(user.posts[feedIndex].comments, function(o) {
                 return o.commentID == req.body.commentID && o.new_comment == (req.body.isUserComment == 'true');
             });
-            //no comment in this post-actions yet
             if (commentIndex == -1) {
                 console.log("Should not happen.");
             }
-
-            //LIKE A COMMENT
+            // User liked the comment.
             else if (req.body.like) {
                 user.posts[feedIndex].comments[commentIndex].liked = true;
-            } else if (req.body.unlike) {
+            }
+            // User unliked the comment. 
+            else if (req.body.unlike) {
                 user.posts[feedIndex].comments[commentIndex].liked = false;
             }
-
-            //FLAG A COMMENT
+            // User flagged the comment.
             else if (req.body.flag) {
                 user.posts[feedIndex].comments[commentIndex].flagged = true;
             }
-        } //Not a comment-- Are we doing anything with the post?
+        }
+        // User interacted with the post. 
         else {
+            // User liked the post.
             if (req.body.like) {
                 user.posts[feedIndex].liked = true;
             }
+            // User unliked the post.
             if (req.body.unlike) {
                 user.posts[feedIndex].liked = false;
             }

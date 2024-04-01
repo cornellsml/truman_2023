@@ -18,3 +18,9 @@
   .one.ui.bottom.attached.icon.buttons
     button.ui.editprofile.button(data-tooltip='Update My Profile', data-position='bottom left')
       i.write.icon
+
+script.
+  //Edit button
+  $('.ui.editprofile.button').on('click', function() {
+      window.location.href = '/account';
+  });

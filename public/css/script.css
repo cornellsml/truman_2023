@@ -3,7 +3,7 @@
 }
 
 
-/*CSS for Posts*/
+/* CSS for Actor and User Posts */
 
 .ui[class*="bottom attached"].buttons .button:first-child {
     border-radius: 0 !important;
@@ -18,14 +18,14 @@
 }
 
 
-/*CSS for adding new post*/
+/* CSS for adding new post */
 
 .ui.label>img {
     width: 2.1666em!important;
 }
 
 
-/*CSS for adding new comment on post*/
+/* CSS for adding new comment on post */
 
 .extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.form {
     width: 100%;
@@ -52,7 +52,7 @@ textarea.newcomment {
 }
 
 
-/*CSS for reporting and blocking modals*/
+/* CSS for reporting and blocking modals */
 
 .modal .ui.form label {
     font-size: medium !important;

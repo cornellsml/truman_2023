@@ -5,9 +5,10 @@ const helpers = require('./helpers');
 
 /**
  * GET /actors
- * Get and render the list of all actors in the Actor database.
+ * If the current user is an admin, retrieve all the actors from the database and render them to the page '../views/actors'.
+ * If the current user is not an admin, redirect the user to the home page. 
  */
-exports.getActors = (req, res) => {
+exports.getActors = async(req, res) => {
     if (!req.user.isAdmin) {
         res.redirect('/');
     } else {
@@ -24,7 +25,10 @@ exports.getActors = (req, res) => {
 
 /**
  * GET /user/:userId
- * Get the profile of the actor whose username field matches the parameter value 'userId'.
+ * Retrieve the profile and relevant experimental posts of the actor whose username field value matches the query parameter value 'userId'. 
+ * Process the posts with the helper function .getFeed() in ./helpers.js.
+ * Check if the current user has blocked or reported the actor.
+ * Render the actor's profile page along with the relevant data.
  */
 exports.getActor = async(req, res, next) => {
     const time_diff = Date.now() - req.user.createdAt;
@@ -32,12 +36,12 @@ exports.getActor = async(req, res, next) => {
         const user = await User.findById(req.user.id).exec();
         const actor = await Actor.findOne({ username: req.params.userId }).exec();
         if (actor == null) {
-            const myerr = new Error('Actor Record not found!');
+            const myerr = new Error('Actor object not found!');
             return next(myerr);
         }
         const isBlocked = user.blocked.includes(req.params.userId);
         const isReported = user.reported.includes(req.params.userId);
-        let script_feed = await Script.find({ actor: actor.id, class: { "$in": ["", user.experimentalCondition] } })
+        const script_feed = await Script.find({ actor: actor.id, class: { "$in": ["", user.experimentalCondition] } })
             .where('time').lte(time_diff)
             .sort('-time')
             .populate('actor')
@@ -54,13 +58,13 @@ exports.getActor = async(req, res, next) => {
 
 /**
  * POST /user
- * Update the block, report, follow actor list of the user.
+ * Handle post requests to block, unblock, report, follow, and unfollow an actor.
  */
 exports.postBlockReportOrFollow = async(req, res, next) => {
     const currDate = Date.now();
     try {
         const user = await User.findById(req.user.id).exec();
-        //Block a user
+        // Block an actor
         if (req.body.blocked) {
             if (!(user.blocked.includes(req.body.blocked))) {
                 user.blocked.push(req.body.blocked)
@@ -72,7 +76,20 @@ exports.postBlockReportOrFollow = async(req, res, next) => {
             };
             user.blockReportAndFollowLog.push(log);
         }
-        //Report a user
+        // Unblock a user
+        else if (req.body.unblocked) {
+            if (user.blocked.includes(req.body.unblocked)) {
+                const index = user.blocked.indexOf(req.body.unblocked);
+                user.blocked.splice(index, 1);
+            }
+            const log = {
+                time: currDate,
+                action: "unblock",
+                actorName: req.body.unblocked,
+            };
+            user.blockReportAndFollowLog.push(log);
+        }
+        // Report an actor
         else if (req.body.reported) {
             if (!(user.reported.includes(req.body.reported))) {
                 user.reported.push(req.body.reported);
@@ -85,20 +102,7 @@ exports.postBlockReportOrFollow = async(req, res, next) => {
             };
             user.blockReportAndFollowLog.push(log);
         }
-        //Unblock a user
-        else if (req.body.unblocked) {
-            if (user.blocked.includes(req.body.unblocked)) {
-                var index = user.blocked.indexOf(req.body.unblocked);
-                user.blocked.splice(index, 1);
-            }
-            const log = {
-                time: currDate,
-                action: "unblock",
-                actorName: req.body.unblocked,
-            };
-            user.blockReportAndFollowLog.push(log);
-        }
-        //Follow a user
+        // Follow an actor
         else if (req.body.followed) {
             if (!(user.followed.includes(req.body.followed))) {
                 user.followed.push(req.body.followed)
@@ -109,10 +113,10 @@ exports.postBlockReportOrFollow = async(req, res, next) => {
                 actorName: req.body.followed,
             };
             user.blockReportAndFollowLog.push(log);
-        } //Unfollow a user
+        } // Unfollow an actor
         else if (req.body.unfollowed) {
             if (user.followed.includes(req.body.unfollowed)) {
-                var index = user.followed.indexOf(req.body.unfollowed);
+                const index = user.followed.indexOf(req.body.unfollowed);
                 user.followed.splice(index, 1);
             }
             const log = {

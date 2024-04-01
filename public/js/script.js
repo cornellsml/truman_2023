@@ -3,12 +3,12 @@ $(window).on("load", function() {
         observeChanges: true
     });
 
-    //Add new post Modal functionality
+    // Add new post Modal functionality
     $("#newpost, a.item.newpost").click(function() {
         $('.ui.tiny.post.modal').modal('show');
     });
 
-    //new post validator (picture and text can not be empty); using Semantic UI
+    // new post validator (picture and text can not be empty); using Fomantic UI
     $('#postform').form({
         on: 'blur',
         fields: {
