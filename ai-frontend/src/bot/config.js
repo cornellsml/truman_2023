@@ -9,8 +9,7 @@ const config = {
     botName: botName,
     initialMessages: [
         createChatBotMessage(`Hi, I'm ${botName}`),
-        createChatBotMessage('I can help you with reconfiguring your simulation and making the Truman app just right for you!',
-        {
+        createChatBotMessage('I can help you with reconfiguring your simulation and making the Truman app just right for you!', {
             delay: 700,
         })
     ],
@@ -21,9 +20,10 @@ const config = {
             investment: null,
             n_rounds: null
         }
-      },
+    },
     customComponents: {
-        botAvatar: (props) => <BotAvatar {...props}/>
+        botAvatar: (props) => < BotAvatar {...props }
+        />
     }
 }
 

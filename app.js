@@ -57,6 +57,7 @@ const actorsController = require('./controllers/actors');
 const scriptController = require('./controllers/script');
 const userController = require('./controllers/user');
 const notificationController = require('./controllers/notification');
+const chatController = require('./controllers/chat');
 
 /**
  * API keys and Passport configuration.
@@ -175,8 +176,8 @@ app.use(express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 })
 app.use('/post_pictures', express.static(path.join(__dirname, 'post_pictures'), { maxAge: 31557600000 }));
 app.use('/profile_pictures', express.static(path.join(__dirname, 'profile_pictures'), { maxAge: 31557600000 }));
 
-// Serve static files from the build directory of your React.js application
-app.use(express.static(path.join(__dirname, 'ai-frontend', 'build'), { maxAge: 31557600000 }));
+// Serve React.js application.
+// app.use(express.static(path.join(__dirname, 'ai-frontend', 'build'), { maxAge: 31557600000 }));
 // Serve static files from the build directory of your React.js application
 app.use('/static', express.static(path.join(__dirname, 'ai-frontend', 'build', 'static')));
 
@@ -257,9 +258,6 @@ app.get('/simulationContent', passportConfig.isAuthenticated, function(req, res)
 
 // Define a route to serve your React.js application
 app.get('/chatbot', passportConfig.isAuthenticated, function(req, res) {
-    // res.render('adminDashboard/codebaseForm', {
-    //     title: 'Making Changes to the Interface'
-    // })
     res.sendFile(path.join(__dirname, 'ai-frontend', 'build', 'index.html'));
 });
 
@@ -276,6 +274,7 @@ app.get('/interfaceForm2', passportConfig.isAuthenticated, function(req, res) {
         title: 'Making Changes to the Interface'
     })
 });
+app.post('chat', passportConfig.isAuthenticated, chatController.postChatMessages);
 
 /**
  * Error Handler.
