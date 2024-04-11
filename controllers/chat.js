@@ -1,4 +1,5 @@
 const Chat = require('../models/Chat.js');
+const User = require('../models/User.js');
 
 /**
  * POST /chat
@@ -12,12 +13,18 @@ exports.postChatMessages = async(req, res, next) => {
 
         const chatdetail = {
             user: user._id,
-            id: req.boy.id,
+            id: req.body.id,
             messages: filteredMessages
         };
 
-        const chat = new Chat(chatdetail);
-        await chat.save();
+        // Check if chat has already been saved in the past. If yes, update messages. If no, create chat object.
+        const existingChat = await Chat.find({ id: req.body.id }).exec();
+        if (existingChat) {
+            existingChat.messages = filteredMessages;
+        } else {
+            const chat = new Chat(chatdetail);
+            await chat.save();
+        }
         res.send({ result: "success" });
     } catch (err) {
         next(err);

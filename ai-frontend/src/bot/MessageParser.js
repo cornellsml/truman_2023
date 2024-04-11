@@ -49,6 +49,12 @@ class MessageParser {
                 this.actionProvider.sequenceHandlerTruman(true, message, null, false);
             }
             this.actionProvider.sequenceHandlerTruman(true, message, null, true);
+        } else if (this.state.chatID == null) {
+            if (lowerMsg.includes("no")) {
+                this.actionProvider.saveChatHandler(false);
+            } else {
+                this.actionProvider.saveChatHandler(true, message);
+            }
         }
     }
 }

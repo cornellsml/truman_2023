@@ -24,6 +24,7 @@ outputFiles
 
 # API keys and secrets
 .env
+config/key.yaml
 
 # Dependency directory
 node_modules

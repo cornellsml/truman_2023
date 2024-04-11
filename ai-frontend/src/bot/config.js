@@ -19,7 +19,8 @@ const config = {
             message: null,
             investment: null,
             n_rounds: null
-        }
+        },
+        chatID: null
     },
     customComponents: {
         botAvatar: (props) => < BotAvatar {...props }

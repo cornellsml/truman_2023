@@ -26,6 +26,24 @@ class ActionProvider {
         this.setChatbotMessage(message);
     }
 
+    saveChatHandler = async(save, chatId = "") => {
+        if (!save) {
+            this.resetTrumanState();
+            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
+            this.setChatbotMessage(message2);
+        } else {
+            this.stateRef.chatID = chatId;
+            const postChat = {
+                id: chatId,
+                messages: this.stateRef.messages
+            }
+            await axios.post("http://localhost:3000/chat", postChat, { headers: { 'Content-Type': 'application/json' } });
+            this.resetTrumanState();
+            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
+            this.setChatbotMessage(message2);
+        }
+    }
+
     metaGptHandler = async(params) => {
         let postBody = {};
         if (params) {
@@ -47,7 +65,7 @@ class ActionProvider {
                 this.setChatbotMessage(message_err);
             });
         if (api_response.status == "Success") {
-            const message_status = this.createChatBotMessage("The following code changes need to be made to the Truman Platform!")
+            const message_status = this.createChatBotMessage("The following code changes have been made to the Truman Platform!")
             let engineer_string = "Generated code " + "\n`" + api_response.response.Engineer["Generated Code Snippet"] + "`\n in the location " + api_response.response.Engineer["Location"];
             const message_engineer = this.createChatBotMessage(engineer_string);
             this.setChatbotMessage(message_status);
@@ -58,9 +76,8 @@ class ActionProvider {
             this.setChatbotMessage(message_status);
         }
         console.log(api_response.response);
-        this.resetTrumanState();
 
-        const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you");
+        const message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".");
         this.setChatbotMessage(message2);
     }
 
