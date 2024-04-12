@@ -18,9 +18,10 @@ exports.postChatMessages = async(req, res, next) => {
         };
 
         // Check if chat has already been saved in the past. If yes, update messages. If no, create chat object.
-        const existingChat = await Chat.find({ id: req.body.id }).exec();
+        const existingChat = await Chat.findOne({ id: req.body.id }).exec();
         if (existingChat) {
             existingChat.messages = filteredMessages;
+            await existingChat.save();
         } else {
             const chat = new Chat(chatdetail);
             await chat.save();
