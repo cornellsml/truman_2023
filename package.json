@@ -9,7 +9,7 @@
     "author": "Dominic DiFranzo",
     "license": "MIT",
     "scripts": {
-        "dev": "concurrently \"cd ./MetaGPT && flask --app server run\" \"nodemon app.js\"",
+        "dev": "concurrently \"cd ./ai-frontend && npm run build\" \"cd ./MetaGPT && flask --app server run\" \"nodemon app.js\"",
         "start": "node app.js",
         "test": "mocha --reporter spec"
     },
