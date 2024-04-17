@@ -1,6 +1,6 @@
 from flask import Flask, request, make_response, jsonify
 import json
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import requests
 import asyncio
 import code_gen_system
@@ -8,12 +8,15 @@ import code_gen_system
 
 app = Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
+@cross_origin()
 def index():
     return "Hello TrumanAI Server"
 
 @app.route('/code-gen', methods=['POST'])
+@cross_origin()
 def get_query():
     #responses
     status = ""
