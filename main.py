@@ -420,7 +420,6 @@ async def main(
 
     investment: float = 20.0,
     n_round: int = 3,
-    add_human: bool = True,
 ):
     logger.info(msg)
 
@@ -428,7 +427,7 @@ async def main(
     team.hire(
         [
             ProjectManager(),
-            SpecWriter(is_human=add_human),
+            SpecWriter(is_human=True),
             TechLead(),
             Developer()
         ]
