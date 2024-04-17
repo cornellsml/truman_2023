@@ -5,13 +5,16 @@
     else
       img(src=user.gravatar(60))
   .content
-    a.header(href='/me')= user.profile.name || user.email || user.id
+    a.header(href='/me')=user.profile.name || user.email || user.id
     .meta="@"+user.username
     .description(style='white-space: pre-wrap')=user.profile.bio
     if user.profile.location
       .description(style="margin-top: 5px;")
         i.marker.icon
         span=user.profile.location
+    if user.isAdmin
+      .description
+        .ui.teal.horizontal.circular.basic.large.label(style="margin-top: 20px;") Administrator
   .one.ui.bottom.attached.icon.buttons
     button.ui.editprofile.button(data-tooltip='Update My Profile', data-position='bottom left')
       i.write.icon

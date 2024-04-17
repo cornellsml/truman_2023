@@ -24,6 +24,7 @@ outputFiles
 
 # API keys and secrets
 .env
+config/key.yaml
 
 # Dependency directory
 node_modules
@@ -38,3 +39,6 @@ bower_components
 # OS metadata
 .DS_Store
 Thumbs.db
+
+#py-caches
+*.pyc

@@ -1,0 +1,50 @@
+extends ../ui_layout
+
+block content
+  .twelve.wide.column(style="margin-top: 2em; margin-bottom: 2em;")
+    h2(style="text-align: center;") Simulation Generation Inputs
+    form.ui.large.form(action='/generateSimulationContent', method='POST', id='simulation')
+      input(type='hidden', name='_csrf', value=_csrf)
+      .field
+        label(for='email') actor_general_description
+        input.form-control(type='text', name='actor_general_description', id='actor_general_description', placeholder='description of the simulation actors (e.g. “generic social media users” or “professional athletes”)')
+      .field
+        label(for='email') num_random_actors
+        input.form-control(type='text', name='num_random_actors', id='num_random_actors', placeholder='number of simulation actors')
+      .field
+        label(for='email') age_range
+        input.form-control(type='text', name='age_range', id='age_range', placeholder='range for randomly generated age of actors for actors.csv generation')
+      .field
+        label(for='email') num_posts_per_actor
+        input.form-control(type='text', name='num_posts_per_actor', id='num_posts_per_actor', placeholder='range for randomly generated number of posts per actor')
+      .field
+        label(for='email') num_replies_per_post
+        input.form-control(type='text', name='num_replies_per_post', id='num_replies_per_post', placeholder='range for randomly generated number of replies per randomly generated post')
+      .field
+        label(for='email') num_hours_before_user_join
+        input.form-control(type='text', name='num_hours_before_user_join', id='num_hours_before_user_join', placeholder='length of simulation BEFORE user joins in hours (max is 24)')
+      .field
+        label(for='email') num_hours_after_user_join
+        input.form-control(type='text', name='num_hours_after_user_join', id='num_hours_after_user_join', placeholder='length of simulation AFTER user joins in hours')
+      .field
+        label(for='email') num_user_posts
+        input.form-control(type='text', name='num_user_posts', id='num_user_posts', placeholder='maximum number of posts we expect participants to post')
+      .field
+        label(for='email') user_likes_per_post
+        input.form-control(type='text', name='user_likes_per_post', id='user_likes_per_post', placeholder='range for randomly generate number of likes per post from participant')
+      .field
+        label(for='email') user_reads_per_post
+        input.form-control(type='text', name='user_reads_per_post', id='user_reads_per_post', placeholder='range for randomly generated number of reads per post from user')
+      .field
+        label(for='email') user_replies_per_post
+        input.form-control(type='text', name='user_replies_per_post', id='user_replies_per_post', placeholder='range for randomly generated number of replies per post from user')
+      .field
+        label(for='email') num_user_replies
+        input.form-control(type='text', name='num_user_replies', id='num_user_replies', placeholder='maximum number of replies we expect participants to post')
+      .field
+        label(for='email') user_likes_per_reply
+        input.form-control(type='text', name='user_likes_per_reply', id='user_likes_per_reply', placeholder='range for randomly generated number of likes per reply from participant')
+      .field
+        label(for='email') user_reads_per_reply
+        input.form-control(type='text', name='user_reads_per_reply', id='user_reads_per_reply', placeholder='range for randomly generated number of reads per reply from user')
+      button.ui.large.button.green(type='submit') Generate Content

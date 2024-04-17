@@ -1,0 +1,23 @@
+extends ../ui_layout
+
+block content
+  .eight.wide.column(style="margin-top: 2em; margin-bottom: 2em;")
+    h2(style="text-align: center;") Chatbot
+    button.ui.large.button.green(onclick="openPopup()") Open Chatbot
+      i.external.link.icon(style="margin-left:10px;margin-right:0px;")
+
+  .eight.wide.column(style="margin-top: 2em; margin-bottom: 2em;")
+      h2(style="text-align: center;") MetaGPT System results
+
+block scripts 
+  script.
+    $(window).on("load", function() {
+      $('button.ui.large.button.green').on('click', function() {
+        const url = "/chatbot";
+        const windowName = "PopupWindow";
+        const windowFeatures = "width=600, height=1000, scrollbars=yes";
+
+        // Open the popup window
+        window.open(url, windowName, windowFeatures);
+      })
+    })

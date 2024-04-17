@@ -18,6 +18,8 @@ const schedule = require('node-schedule');
 const multer = require('multer');
 const fs = require('fs');
 const util = require('util');
+
+
 fs.readFileAsync = util.promisify(fs.readFile);
 
 /**
@@ -55,6 +57,8 @@ const actorsController = require('./controllers/actors');
 const scriptController = require('./controllers/script');
 const userController = require('./controllers/user');
 const notificationController = require('./controllers/notification');
+const chatController = require('./controllers/chat');
+const codeGenController = require('./controllers/code-gen')
 
 /**
  * API keys and Passport configuration.
@@ -132,7 +136,7 @@ app.use(flash());
 app.use((req, res, next) => {
     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
     // This allows us to not check CSRF when uploading an image file. It's a weird issue that multer and lusca do not play well together.
-    if ((req.path === '/post/new') || (req.path === '/account/profile') || (req.path === '/account/signup_info_post')) {
+    if ((req.path === '/post/new') || (req.path === '/account/profile') || (req.path === '/account/signup_info_post' || (req.path == '/chat') || req.path == '/chat-data')) {
         console.log("Not checking CSRF. Out path now");
         next();
     } else {
@@ -173,6 +177,11 @@ app.use(express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 })
 app.use('/post_pictures', express.static(path.join(__dirname, 'post_pictures'), { maxAge: 31557600000 }));
 app.use('/profile_pictures', express.static(path.join(__dirname, 'profile_pictures'), { maxAge: 31557600000 }));
 
+// Serve React.js application.
+// app.use(express.static(path.join(__dirname, 'ai-frontend', 'build'), { maxAge: 31557600000 }));
+// Serve static files from the build directory of your React.js application
+app.use('/static', express.static(path.join(__dirname, 'ai-frontend', 'build', 'static')));
+
 /**
  * Primary app routes.
  */
@@ -198,8 +207,6 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
 
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
-app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
-
 app.get('/notifications', passportConfig.isAuthenticated, notificationController.getNotifications);
 
 app.get('/login', userController.getLogin);
@@ -223,7 +230,6 @@ app.post('/account/consent', passportConfig.isAuthenticated, userController.post
 app.get('/me', passportConfig.isAuthenticated, userController.getMe);
 app.get('/user/:userId', passportConfig.isAuthenticated, actorsController.getActor);
 app.post('/user', passportConfig.isAuthenticated, actorsController.postBlockReportOrFollow);
-app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors)
 
 app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
 app.post('/feed', passportConfig.isAuthenticated, scriptController.postUpdateFeedAction);
@@ -234,6 +240,44 @@ app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     })
 });
 
+
+/**
+ * Administrator-only routes.
+ */
+app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
+app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors);
+app.get('/admin', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/adminHomePage', {
+        title: 'Admin Home'
+    })
+});
+app.get('/simulationContent', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/simulationForm', {
+        title: 'Simulation Content Form'
+    })
+});
+
+// Define a route to serve your React.js application
+app.get('/chatbot', passportConfig.isAuthenticated, function(req, res) {
+    res.sendFile(path.join(__dirname, 'ai-frontend', 'build', 'index.html'));
+});
+// Post request to save chat messages.
+app.post('/chat', passportConfig.isAuthenticated, chatController.postChatMessages);
+app.post('/chat-data', passportConfig.isAuthenticated, codeGenController.postAgentResponses);
+
+// Alternative 1: Display interface. On the interface, open popup to route /interfaceForm
+app.get('/interfaceForm', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/codebaseForm', {
+        title: 'Making Changes to the Interface'
+    })
+});
+
+// Alternative 2: Display chatbot as a component on the interface. (TO DO)
+app.get('/interfaceForm2', passportConfig.isAuthenticated, function(req, res) {
+    res.render('adminDashboard/codebaseForm2', {
+        title: 'Making Changes to the Interface'
+    })
+});
 /**
  * Error Handler.
  */

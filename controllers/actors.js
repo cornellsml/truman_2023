@@ -12,12 +12,14 @@ exports.getActors = async(req, res) => {
     if (!req.user.isAdmin) {
         res.redirect('/');
     } else {
-        try {
-            const actors = await Actor.find().exec();
-            res.render('actors', { actors: actors });
-        } catch (err) {
-            next(err);
-        }
+        Actor.find({})
+            .then((actors) => {
+                res.render('adminDashboard/actors', { actors: actors, title: 'Actors' });
+            })
+            .catch((err) => {
+                console.log(err);
+                done(err)
+            });
     }
 };
 

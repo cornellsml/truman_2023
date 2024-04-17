@@ -1,0 +1,24 @@
+extends ../ui_layout
+
+block content
+  .sixteen.wide.column
+    table.ui.celled.padded.table
+      thead
+        tr
+          th.single.line E-mail
+          th MTurk ID
+          th Start Date (ET)
+          th Active?
+          th Approximate total time on site
+          th # of Posts
+          th # of Comments
+      each u in users
+        tbody
+          tr
+            td=u.email
+            td.single.line=u.mturkID
+            td=u.createdAt.toLocaleString("en-US", {timeZone: "America/New_York"})
+            td=u.active
+            td=Math.round(u.pageTimes.reduce((partialSum, a) => partialSum + a, 0)/1000/60)+" minutes"
+            td=u.numPosts + 1
+            td=u.numComments + 1
