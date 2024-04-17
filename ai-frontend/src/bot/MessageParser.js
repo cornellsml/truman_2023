@@ -62,11 +62,17 @@ class MessageParser {
         }
         else if (this.state.chatID != null & this.state.trumanCodeGenSequence == true) {
             // continue to log data once id given
-            const ID_update = this.updateChatID(this.state.chatID)
-            if (!lowerMsg.includes("no")) {
-                this.actionProvider.saveChatHandler(ID_update);
+            // const ID_update = this.updateChatID(this.state.chatID)
+            if (lowerMsg.includes("rename")) {
+                this.actionProvider.removeChatId();
             }
-            this.actionProvider.saveAgentResponseHandler(ID_update);
+            else {
+                if (!lowerMsg.includes("no")) {
+                    this.actionProvider.saveChatHandler(this.state.chatID);
+                }
+
+                this.actionProvider.saveAgentResponseHandler(this.state.chatID);
+            }
         }
     }
 

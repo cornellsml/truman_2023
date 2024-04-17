@@ -54,6 +54,9 @@ class ActionProvider {
             await axios.post("http://localhost:3000/chat-data", postAgentResponse, { headers: { 'Content-Type': 'application/json' } });
             console.log("saveAgentResponseHandler complete")
             //resetting state
+            if (this.stateRef.chatID == "NA") {
+                this.stateRef.chatID = null
+            }
             this.resetTrumanState();
             const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
             this.setChatbotMessage(message2);
@@ -117,7 +120,7 @@ class ActionProvider {
             var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".");
         }
         else {
-            var message2 = this.createChatBotMessage("If you'd like to save this chat history, type \"yes\". If not, respond \"no\".");
+            var message2 = this.createChatBotMessage("If you'd like to save the chat history of " + this.stateRef.chatID + ", type \"yes\". If not, respond \"no\" or \"rename\" to save under a new chat ID");
         }
         this.setChatbotMessage(message2);
     }
@@ -201,6 +204,12 @@ class ActionProvider {
     setChatbotMessage = (message) => {
         this.setState(state => ({...this.stateRef, messages: [...state.messages, message] }))
     }
+
+    removeChatId = () => {
+        this.stateRef.chatID = null
+        const message = this.createChatBotMessage("Please provide a chat ID or label");
+        this.setChatbotMessage(message);
+    }   
 }
 
 export default ActionProvider;

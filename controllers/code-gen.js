@@ -1,7 +1,6 @@
 const CodeGen = require('../models/CodeGen.js');
 const User = require('../models/User.js');
 
-// TODO: update cloud with data
 exports.postAgentResponses = async(req, res, next) => {
     try {
         console.log("IN { controller / postAgentResponses } with following param")
@@ -30,8 +29,21 @@ exports.postAgentResponses = async(req, res, next) => {
             agentResponses: agentResponseFiltered
         };
         console.log(codeGenDetail)
-        const code_gen = new CodeGen(codeGenDetail);
-        await code_gen.save();
+
+        console.log("ID :" + req.body.id)
+        const existing_id = await CodeGen.findOne({ id: req.body.id }).exec();
+        console.log("Existing Id")
+        console.log(existing_id)
+        if (existing_id) {
+          existing_id.agentResponses = codeGenDetail;
+          await existing_id.save();
+        }
+        else {
+          const code_gen = new CodeGen(codeGenDetail);
+          await code_gen.save();
+        }
+
+
         res.send({ result: "success" });
     } catch (err) {
         next(err);
