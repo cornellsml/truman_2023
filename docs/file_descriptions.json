@@ -5,7 +5,7 @@
   },
   {
     "file_name": "controllers/actors.js",
-    "description": "This file is a controller file that manages functionalities related to actors, including viewing a directory of all the actors, viewing a specific actor’s profile page, and handling user interactions with an actor (including: blocking, unblocking, reporting, following, and unfollowing)."
+    "description": "This file is a controller file that manages functionalities related to actors, including viewing a directory of all the actors, viewing a specific actor's profile page, and handling user interactions with an actor (including: blocking, unblocking, reporting, following, and unfollowing)."
   },
   {
     "file_name": "controllers/helpers.js",
@@ -21,7 +21,7 @@
   },
   {
     "file_name": "controllers/user.js",
-    "description": "This file is a controller file that manages all other functionalities related to the user (that aren’t related to the newsfeed and posts), including logging in, logging out, signing up, updating a user’s profile or consent response, logging the pages a user visits and how long they are on the application, and deactivating a user."
+    "description": "This file is a controller file that manages all other functionalities related to the user (that aren't related to the newsfeed and posts), including logging in, logging out, signing up, updating a user's profile or consent response, logging the pages a user visits and how long they are on the application, and deactivating a user."
   },
   {
     "file_name": "models/Actor.js",
@@ -29,7 +29,7 @@
   },
   {
     "file_name": "models/Notification.js",
-    "description": "This file defines the mongoose schema and model for a Notification. Notifications are simulated responses/actions by an actor to a user’s post or comment on the application."
+    "description": "This file defines the mongoose schema and model for a Notification. Notifications are simulated responses/actions by an actor to a user's post or comment on the application."
   },
   {
     "file_name": "models/Script.js",
@@ -45,11 +45,11 @@
   },
   {
     "file_name": "input/notification(read,like).csv",
-    "description": "This csv file defines the simulated actions of reading and liking by an actor to a user’s posts and comments. The information in this csv is loaded into the database Notifications collection via running the populate.js script."
+    "description": "This csv file defines the simulated actions of reading and liking by an actor to a user's posts and comments. The information in this csv is loaded into the database Notifications collection via running the populate.js script."
   },
   {
     "file_name": "input/notification(reply).csv",
-    "description": "This csv file defines the simulated action of commenting by an actor to a user’s posts. The information in this csv is loaded into the database Notifications collection via running the populate.js script."
+    "description": "This csv file defines the simulated action of commenting by an actor to a user's posts. The information in this csv is loaded into the database Notifications collection via running the populate.js script."
   },
   {
     "file_name": "input/posts.csv",
@@ -65,11 +65,11 @@
   },
   {
     "file_name": "profile_pictures",
-    "description": "This directory contains all the photo files for the simulation actors’ profile photos."
+    "description": "This directory contains all the photo files for the simulation actors' profile photos."
   },
   {
     "file_name": "public/",
-    "description": "This directory contains all the application’s static assets (fonts, css, js, img)."
+    "description": "This directory contains all the application's static assets (fonts, css, js, img)."
   },
   {
     "file_name": "public/css/notification.css",
@@ -85,11 +85,11 @@
   },
   {
     "file_name": "public/js/actor.js",
-    "description": "This file contains the client-side JavaScript specific to handling functionalities on an actor’s “Profile” page. It includes handling blocking, reporting, following an actor."
+    "description": "This file contains the client-side JavaScript specific to handling functionalities on an actor's “Profile” page. It includes handling blocking, reporting, following an actor."
   },
   {
     "file_name": "public/js/main.js",
-    "description": "This file contains all the client-side JavaScript for the general web application, including recording the user’s active time on the website, enabling checkbox and dropdown components, updating notifications, and previewing and lazy loading images."
+    "description": "This file contains all the client-side JavaScript for the general web application, including recording the user's active time on the website, enabling checkbox and dropdown components, updating notifications, and previewing and lazy loading images."
   },
   {
     "file_name": "public/js/notification.js",
@@ -137,7 +137,7 @@
   },
   {
     "file_name": "views/partials/actorPost.pug",
-    "description": "Partial template for displaying an actor’s post."
+    "description": "Partial template for displaying an actor's post."
   },
   {
     "file_name": "views/partials/ui_flash.pug",
@@ -149,7 +149,7 @@
   },
   {
     "file_name": "views/partials/userCard.pug",
-    "description": "Partial template for displaying the user’s profile card. This is displayed on the left side of the “Newsfeed” page and user's “Profile” page and user’s “Notification” page."
+    "description": "Partial template for displaying the user's profile card. This is displayed on the left side of the “Newsfeed” page and user's “Profile” page and user's “Notification” page."
   },
   {
     "file_name": "views/partials/userPost.pug",
@@ -157,7 +157,7 @@
   },
   {
     "file_name": "views/actor.pug",
-    "description": "Template for an actor's “Profile” page. This page displays the actor’s profile on the left and their posts on the right."
+    "description": "Template for an actor's “Profile” page. This page displays the actor's profile on the left and their posts on the right."
   },
   {
     "file_name": "views/actors.pug",
@@ -181,7 +181,7 @@
   },
   {
     "file_name": "views/me.pug",
-    "description": "Template for an user’s “Profile” page. This page displays the user’s profile on the left and their posts on the right."
+    "description": "Template for an user's “Profile” page. This page displays the user's profile on the left and their posts on the right."
   },
   {
     "file_name": "views/notification.pug",

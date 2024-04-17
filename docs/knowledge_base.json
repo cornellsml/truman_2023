@@ -1,0 +1,27 @@
+{
+  "platformOverview": {
+    "purpose": "Social media simulation for research",
+    "coreFunctionalities": [
+      "Post creation",
+      "Commenting",
+      "User interactions",
+      "Data analytics"
+    ],
+    "userDemographics": ["Researchers", "Participants"]
+  },
+  "terminology": {
+    "Actors": "Actors are the simulated users on the platform that research participants believe are real people. You'll create personas for all actors in the simulation. This includes information such as usernames, names, and profile photos.",
+    "User": "User is the research participant",
+    "Posts": "Posts are the simulated posts on the platform feed/timeline. All posts include images and text. When defining the simulated posts, you will need to consider the timing of the posts and the comments left by other actors on the posts.",
+    "Notifications": "Notifications are the behavioral feedback of the actors in response to a research participant's behavior on the platform. For example, when a participant makes a post on the feed, you can define notifications that are sent to the participant that indicate other actors on the site viewed or liked the post. This reinforces the realism of the platform and signals to the participant that there are other 'people' on the website too."
+  },
+  "Modification Types": [
+    "Experimental condition assignment",
+    "Posts metadata addition",
+    "Interface change only (to actor post), experimental condition based",
+    "Feature addition (not to an actor post) But no recording needed",
+    "Rendering newsfeed change",
+    "Feature addition (to actor post)",
+    "Add a page w recorded functionality"
+  ]
+}
