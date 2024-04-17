@@ -34,6 +34,8 @@ exports.postAgentResponses = async(req, res, next) => {
         const existing_id = await CodeGen.findOne({ id: req.body.id }).exec();
         console.log("Existing Id")
         console.log(existing_id)
+
+        
         if (existing_id) {
           existing_id.agentResponses = codeGenDetail;
           await existing_id.save();
@@ -42,7 +44,6 @@ exports.postAgentResponses = async(req, res, next) => {
           const code_gen = new CodeGen(codeGenDetail);
           await code_gen.save();
         }
-
 
         res.send({ result: "success" });
     } catch (err) {
