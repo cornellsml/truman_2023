@@ -58,6 +58,7 @@ const scriptController = require('./controllers/script');
 const userController = require('./controllers/user');
 const notificationController = require('./controllers/notification');
 const chatController = require('./controllers/chat');
+const codeGenController = require('./controllers/code-gen')
 
 /**
  * API keys and Passport configuration.
@@ -135,7 +136,7 @@ app.use(flash());
 app.use((req, res, next) => {
     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
     // This allows us to not check CSRF when uploading an image file. It's a weird issue that multer and lusca do not play well together.
-    if ((req.path === '/post/new') || (req.path === '/account/profile') || (req.path === '/account/signup_info_post' || (req.path == '/chat'))) {
+    if ((req.path === '/post/new') || (req.path === '/account/profile') || (req.path === '/account/signup_info_post' || (req.path == '/chat') || req.path == '/chat-data')) {
         console.log("Not checking CSRF. Out path now");
         next();
     } else {
@@ -262,6 +263,7 @@ app.get('/chatbot', passportConfig.isAuthenticated, function(req, res) {
 });
 // Post request to save chat messages.
 app.post('/chat', passportConfig.isAuthenticated, chatController.postChatMessages);
+app.post('/chat-data', passportConfig.isAuthenticated, codeGenController.postAgentResponses);
 
 // Alternative 1: Display interface. On the interface, open popup to route /interfaceForm
 app.get('/interfaceForm', passportConfig.isAuthenticated, function(req, res) {

@@ -20,6 +20,7 @@ const config = {
             investment: null,
             n_rounds: null
         },
+        agentLogs: [],
         chatID: null
     },
     customComponents: {

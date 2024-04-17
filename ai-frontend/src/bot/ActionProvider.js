@@ -26,22 +26,37 @@ class ActionProvider {
         this.setChatbotMessage(message);
     }
 
-    saveChatHandler = async(save, chatId = "") => {
-        if (!save) {
-            this.resetTrumanState();
-            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
-            this.setChatbotMessage(message2);
-        } else {
-            this.stateRef.chatID = chatId;
-            const postChat = {
-                id: chatId,
-                messages: this.stateRef.messages
-            }
-            await axios.post("http://localhost:3000/chat", postChat, { headers: { 'Content-Type': 'application/json' } });
-            this.resetTrumanState();
-            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
-            this.setChatbotMessage(message2);
+    saveChatHandler = async(chatId = "") => {
+        console.log("Running saveChatHandler")
+        this.stateRef.chatID = chatId;
+
+        const postChat = {
+            id: chatId,
+            messages: this.stateRef.messages
         }
+        await axios.post("http://localhost:3000/chat", postChat, { headers: { 'Content-Type': 'application/json' } });
+        console.log("saveChatHandler complete")
+    }
+
+    saveAgentResponseHandler = async(chatId = "none") => {
+            console.log("Running saveAgentResponseHandler")
+            console.log("AGENT LOGS:")
+            console.log(this.stateRef.agentLogs)
+            // update chatid and format agent response
+            this.stateRef.chatID = chatId;
+            const postAgentResponse = {
+                id: chatId,
+                agentResponses: this.stateRef.agentLogs,
+            }
+            console.log("AGENT Response to post:")
+            console.log(postAgentResponse)
+
+            await axios.post("http://localhost:3000/chat-data", postAgentResponse, { headers: { 'Content-Type': 'application/json' } });
+            console.log("saveAgentResponseHandler complete")
+            //resetting state
+            this.resetTrumanState();
+            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
+            this.setChatbotMessage(message2);
     }
 
     metaGptHandler = async(params) => {
@@ -54,11 +69,34 @@ class ActionProvider {
             })
         }
         let api_response = "";
-        // TODO: set post data
         await axios.post("http://localhost:5000/code-gen", postBody, { headers: { 'Content-Type': 'application/json' } })
             .then(resp => {
                 api_response = resp.data;
+                console.log("API RESPONSE:")
                 console.log(api_response);
+                if (api_response.status == "Fail") {
+                    var log = {
+                        rounds: this.stateRef.trumanCodeGenData.n_rounds,
+                        investment: this.stateRef.trumanCodeGenData.investment,
+                        status: api_response.status,
+                        human: this.stateRef.trumanCodeGenData.message,
+                        engineer: {"Generated Code Snippet": "NA", Location: "NA"},
+                        projectManager: {"Implementation Plan": "NA", "Relevant Files": "NA"} 
+                    }
+                }
+                else {
+                    var log = {
+                        rounds: this.stateRef.trumanCodeGenData.n_rounds,
+                        investment: this.stateRef.trumanCodeGenData.investment,
+                        status: api_response.status,
+                        human: this.stateRef.trumanCodeGenData.message,
+                        engineer: api_response.response.Engineer,
+                        projectManager: api_response.response.ProjectManager
+                    }
+                }
+                console.log("agentLog")
+                console.log(log)
+                this.stateRef.agentLogs.push(log)
             }).catch(err => {
                 console.log(err);
                 const message_err = "Uh Oh! Something went wrong. Please try again later.";
@@ -69,15 +107,18 @@ class ActionProvider {
             let engineer_string = "Generated code " + "\n`" + api_response.response.Engineer["Generated Code Snippet"] + "`\n in the location " + api_response.response.Engineer["Location"];
             const message_engineer = this.createChatBotMessage(engineer_string);
             this.setChatbotMessage(message_status);
-            this.setChatbotMessage(message_engineer); // we probably don't want to give this info unless it's asked "what did engineer/pm do"
-            // TO DO: Display the changes from API call.
+            this.setChatbotMessage(message_engineer); 
         } else {
             const message_status = this.createChatBotMessage("I'm not able to change the code base at this time. Please try again later.");
             this.setChatbotMessage(message_status);
         }
         console.log(api_response.response);
-
-        const message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".");
+        if (this.stateRef.chatID == null){
+            var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".");
+        }
+        else {
+            var message2 = this.createChatBotMessage("If you'd like to save this chat history, type \"yes\". If not, respond \"no\".");
+        }
         this.setChatbotMessage(message2);
     }
 
@@ -163,3 +204,10 @@ class ActionProvider {
 }
 
 export default ActionProvider;
+
+
+// TODO:
+// 1) Make agent "history"
+// 2) Include "investments" and "rounds"
+// 3) Add "npm run dev" to the package.json
+// --- package.json/scripts

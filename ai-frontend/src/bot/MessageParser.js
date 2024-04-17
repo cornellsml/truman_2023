@@ -50,11 +50,39 @@ class MessageParser {
             }
             this.actionProvider.sequenceHandlerTruman(true, message, null, true);
         } else if (this.state.chatID == null) {
-            if (lowerMsg.includes("no")) {
-                this.actionProvider.saveChatHandler(false);
-            } else {
-                this.actionProvider.saveChatHandler(true, message);
+            if (!lowerMsg.includes("no")) {
+                // log data and messages if yes & chatID given
+                this.actionProvider.saveChatHandler(message);
+                this.actionProvider.saveAgentResponseHandler(message);
             }
+            else {
+                // log data if chatid not given
+                this.actionProvider.saveAgentResponseHandler("NA");
+            }
+        }
+        else if (this.state.chatID != null & this.state.trumanCodeGenSequence == true) {
+            // continue to log data once id given
+            const ID_update = this.updateChatID(this.state.chatID)
+            if (!lowerMsg.includes("no")) {
+                this.actionProvider.saveChatHandler(ID_update);
+            }
+            this.actionProvider.saveAgentResponseHandler(ID_update);
+        }
+    }
+
+    updateChatID(id) {
+        // Split the string at the last underscore
+        let parts = id.split('_');
+        let lastPart = parts.pop(); 
+    
+        // Check if the last part is a numeric value
+        if (!isNaN(lastPart)) {
+            // If it's a number, increment it
+            let incremented = parseInt(lastPart, 10) + 1;
+            return parts.join('_') + '_' + incremented;
+        } else {
+            // If no underscore was present or last part isn't numeric, add "_2"
+            return id + '_2';
         }
     }
 }
