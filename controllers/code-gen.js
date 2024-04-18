@@ -37,7 +37,7 @@ exports.postAgentResponses = async(req, res, next) => {
 
         
         if (existing_id) {
-          existing_id.agentResponses = codeGenDetail;
+          existing_id.agentResponses = agentResponseFiltered;
           await existing_id.save();
         }
         else {
