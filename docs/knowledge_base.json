@@ -23,5 +23,9 @@
     "Rendering newsfeed change",
     "Feature addition (to actor post)",
     "Add a page w recorded functionality"
+  ],
+  "Technical guidance": [
+    "For 'Experimental condition assignment' type of change, the relevant files are 'controllers/user.js' and 'models/User.js'",
+    "There is no specific style preference for the platform"
   ]
 }

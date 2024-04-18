@@ -140,7 +140,7 @@ class SumarizeRequirement(Action):
     Role: You are a TechLead of a web application 'Truman Platform'. You are receiving the conversation between the project manager and the social scientist (SpecWriter). Your task is to summarize the requirement.
     ATTENTION: Use '##' to SPLIT SECTIONS, not '#'.
     ## Requirement: Provided as Python list[str]. Output the summarized requirement.
-    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like Format Example, and only output the json inside this tag, nothing else.
+    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like 'Format Example', and only output the json inside this tag, nothing else.
     """
 
     FORMAT_EXAMPLE: str = """
@@ -352,8 +352,11 @@ class WriteCode(Action):
     async def run(self, plan):
         output = []
         for p in plan:
-            with open(TRUMAN_ROOT / p[0], "r") as f:
-                file_content = f.read()
+            try:
+                with open(TRUMAN_ROOT / p[0], "r") as f:
+                    file_content = f.read()
+            except FileNotFoundError:
+                file_content = "File not found. Please create a new file."
             prompt = self.PROMPT_FORMAT.format(name=p[0], file_content=file_content, impl_plan=p[1])
             rsp = await self._aask(prompt)
             output.append(rsp)
@@ -380,7 +383,7 @@ class Developer(Role):
         return msg
 
 async def main(
-    msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster's name. ",
+    # msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster's name. ",
     
     # msg: str = "When a user creates an account, randomly assign them to one of 6 experimental conditions: 'view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'. This information should not be displayed to the user.",
 
@@ -394,9 +397,9 @@ async def main(
     # When a user creates an account, randomly assign them to one of 4 experimental conditions: "5:nudge", "5:none", "80:nudge", "80:none". This information should not be displayed to the user.
     # """,
 
-    # msg: str = """
-    # When a user creates an account, randomly assign them to one of 6 experimental conditions: "others:ambig", "ai:ambig", "none:ambig", "others:unambig", "ai:unambig", "none:unambig". This information should not be displayed to the user.
-    # """,
+    msg: str = """
+    When a user creates an account, randomly assign them to one of 6 experimental conditions: "others:ambig", "ai:ambig", "none:ambig", "others:unambig", "ai:unambig", "none:unambig". This information should not be displayed to the user.
+    """,
 
     # msg: str = """
     # When a user creates an account, randomly assign them to one of 3 experimental conditions: "5", "4", "2". This information should not be displayed to the user.
@@ -411,7 +414,37 @@ async def main(
     # msg: str = """
     # If the user is in the experimental group "view: large", "view:small", or "view:none", then for each post, when they scroll past the post, display an opaque overlay over the post. This overlay should have the following: a large eye icon, the text "You've read this!", and a black button "Read Again?". If the user is in the experimental group "view:large" or "view:small", the overlay should also display the original poster's profile photo alongside text that says "Jane Doe" has been notified, where "Jane Doe" is replaced with the orignal poster's name. All these items should appear one above another and centered on the overlay. When the "Read Again?" button is clicked, the overlay should fade away so the user can see the post again.
     # """,
+
+    # msg: str =  """
+    # If the user is in the experimental group "empathy:view" or "empathy:none", then for each post, add a grey box above the comment box. The grey box should include a feeling prompt question: 'How is Jane Done feeling?' where the name "Jane Doe" is customized by the original poster's name.
+    # """,
         
+    # msg: str = """
+    # If the user is in the experimental group "none:view" or "empathy:view", then for each post, when they scroll past a post, display a grey box over the bottom quarter of the picture. The grey box should span the entire width of the picture and display the text "You've read this!". Also, it should display the original poster's profile picture, and the text "Jane Doe has been notified", where "Jane Doe" is customized by the original poster's name. 
+    # """,
+
+    # msg: str = """
+    # If the user is in the experimental group "5:nudge" or "80:nudge", then add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text "Do you really want to share this image? Everyone on EatSnap.Love could potentially see this." then have 2 buttons: a green button that says "Yes, share it" and a red button that says "No, don't share it". If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.
+    # """,
+
+    # msg: str = """
+    # Show the post that has the comment labeled "ambig_flag" or "unambig_flag" at the top of the timeline each day. 
+    # """,
+
+    # msg: str = """
+    # Show the post that has the comment labeled "ambig_none" or "unambig_none" in the middle of the newsfeed each day. Make sure the user always sees the unmoderated harassment comment post after the moderated harassment comment post. 
+    # """,
+
+    # msg: str = """
+    # Below the comments labeled "ambig_flag" and "unambig_flag", put a prompt box. In this prompt box, an icon will be showed on the left and text and "Yes" and "No" buttons will be shown on the right. The icon and the text shown depends on the user's experimental condition. 
+    # If the user is in the experimental condition "users:ambiguous" or "users: unambiguous", the icon shown is a flag and the text says "Other users have flagged this comment as harassment. Do you agree?". If the user is in the experimental condition "ai:ambiguous" or "ai:unambiguous", the icon shown is a computer and the text says "Our automated system has flagged this comment as harassment. Do you agree?". If the user is in the experimental condition "none:ambiguous" or "ai:ambiguous", the icons hown is a flag and the text says "This comment has been flagged as harassment. Do you agree?". 
+    # The comment and the prompt should all be outlined by a box with a glowing red border. The background color of the entire post is also changed to red. 
+
+    # The user's selection in the prompt box of "Yes" or "No" should be recorded.
+
+    # After a user selects "Yes" or "No" in the prompt box, the background color of the entire post should change to it's original color. If the user selected "Yes", hide the comment. If the user selected "No", do not hide the comment. Additionally, the prompt box should be replaced with a new prompt box. This new prompt box shold be green, with a scale icon to the left and the text "Your response has been recorded. Do you want to view the moderation policy?" with "Yes" and "No" buttons below it to the right. If the user's selection in this prompt box is "No", the prompt box should disappear. If the user's selection in this prompt box is "Yes", redirect the user to the community rules page. 
+    # """,
+
     # msg: str = """
     # After a user signs up for the platform and views the community rules, add a page that allows users to choose 2 cuisines out of a list of 5 (Cajun, Asian, American, Italian, Mexican). Display the text: "Choose 2 cuisines you are interested in for a more personalized newsfeed" above the selection form. Record the user's selection. Only display the posts with labels matching the user's selection in the newsfeed.
 
