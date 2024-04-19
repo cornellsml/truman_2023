@@ -59,7 +59,7 @@ class ActionProvider {
                 this.stateRef.chatID = null
             }
             this.resetTrumanState();
-            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.");
+            const message2 = this.createChatBotMessage("Let me know if there's anything else I can do for you.", {delay: 700});
             this.setChatbotMessage(message2);
     }
 
@@ -131,9 +131,9 @@ class ActionProvider {
         console.log("====== END REMOVE LOADING")
 
         if (api_response.status == "Success") {
-            const message_status = this.createChatBotMessage("The following code changes have been made to the Truman Platform!")
+            const message_status = this.createChatBotMessage("The following code changes have been made to the Truman Platform!", {delay: 700})
             let engineer_string = "Generated code " + "\n`" + api_response.response.Engineer["Generated Code Snippet"] + "`\n in the location " + api_response.response.Engineer["Location"];
-            const message_engineer = this.createChatBotMessage(engineer_string);
+            const message_engineer = this.createChatBotMessage(engineer_string, {delay: 700});
             this.setChatbotMessage(message_status);
             this.setChatbotMessage(message_engineer); 
         } else {
@@ -142,10 +142,10 @@ class ActionProvider {
         }
         console.log(api_response.response);
         if (this.stateRef.chatID == null){
-            var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".");
+            var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".", {delay: 700});
         }
         else {
-            var message2 = this.createChatBotMessage("If you'd like to save the chat history of " + this.stateRef.chatID + ", type \"yes\". If not, respond \"no\" or \"rename\" to save under a new chat ID");
+            var message2 = this.createChatBotMessage("If you'd like to save the chat history of " + this.stateRef.chatID + ", type \"yes\". If not, respond \"no\" or \"rename\" to save under a new chat ID", {delay: 700});
         }
         this.setChatbotMessage(message2);
     }
@@ -154,21 +154,21 @@ class ActionProvider {
         console.log(this.stateRef);
         if (!prompt) {
             // User specified to use no prompt or example prompt. Run defaults.
-            const message = this.createChatBotMessage("Sure, I can help by updating the Truman codebase. This may take a moment.");
+            const message = this.createChatBotMessage("Sure, I can help by updating the Truman codebase. This may take a moment.", {delay: 700});
             this.setChatbotMessage(message);
             this.metaGptHandler(false);
         } else {
             if (this.stateRef.trumanCodeGenSequence == false) {
                 // initial sequence launch, prompt msg
                 this.stateRef.trumanCodeGenSequence = true;
-                const message = this.createChatBotMessage("Sure, I can help by updating the Truman codebase with your desired changes.")
+                const message = this.createChatBotMessage("Sure, I can help by updating the Truman codebase with your desired changes.", {delay: 700})
                 this.setChatbotMessage(message);
-                const message_2 = this.createChatBotMessage('What would you like me to change?');
+                const message_2 = this.createChatBotMessage('What would you like me to change?', {delay: 700});
                 this.setChatbotMessage(message_2);
             } else if (this.stateRef.trumanCodeGenData.message == null) {
                 // received msg, prompt investment
                 this.stateRef.trumanCodeGenData.message = userMessage;
-                const message = this.createChatBotMessage('If you would like to set an investment, please tell me an amount.');
+                const message = this.createChatBotMessage('If you would like to set an investment, please tell me an amount.', {delay: 700});
                 this.setChatbotMessage(message);
             } else if (this.stateRef.trumanCodeGenData.investment == null) {
                 // received investment, prompt rounds
@@ -182,7 +182,7 @@ class ActionProvider {
                 } else {
                     this.stateRef.trumanCodeGenData.investment = 20.0;
                 }
-                const message = this.createChatBotMessage('If you would like to set the number of rounds, please tell me an amount.');
+                const message = this.createChatBotMessage('If you would like to set the number of rounds, please tell me an amount.', {delay: 700});
                 this.setChatbotMessage(message);
             } else if (this.stateRef.trumanCodeGenData.n_rounds == null & invest == null) {
                 // received rounds, run metagpt
@@ -232,9 +232,23 @@ class ActionProvider {
 
     removeChatId = () => {
         this.stateRef.chatID = null
-        const message = this.createChatBotMessage("Please provide a chat ID or label");
+        const message = this.createChatBotMessage("Please provide a chat ID or label", {delay: 700});
         this.setChatbotMessage(message);
     }   
+    clearChat = () => {
+        const message = this.createChatBotMessage("Okay, clearing chat!");
+        this.setChatbotMessage(message);
+        const message2 = this.createChatBotMessage(" ",{delay: 700});
+        this.setChatbotMessage(message2);
+        this.setState((prev) => {
+            // Remove Loading here
+            return { ...prev, messages: [
+                this.createChatBotMessage(`Hi, I'm TrumanAI`),
+                this.createChatBotMessage('I can help you with reconfiguring your simulation and making the Truman app just right for you!', 
+                    {delay: 700}
+                )]}
+            })
+    }
 }
 
 export default ActionProvider;

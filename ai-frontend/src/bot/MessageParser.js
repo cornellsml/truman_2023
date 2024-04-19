@@ -25,7 +25,12 @@ class MessageParser {
             // Check for specific commands before sending to GPT
             else if (lowerMsg.includes("hello world")) {
                 this.actionProvider.messageHandlerHelloWorld();
-            } else {
+            } 
+            else if (lowerMsg.includes("clear") && lowerMsg.includes("chat")) {
+                this.actionProvider.clearChat();
+            }
+            
+            else {
                 // For all other messages, use GPT-3.5 handler
                 this.actionProvider.messageHandlerGpt(message);
             }
