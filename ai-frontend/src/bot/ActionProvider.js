@@ -1,6 +1,7 @@
 // ActionProvider starter code
 import OpenAI from "openai";
 import axios from 'axios';
+import ReactLoading from "react-loading";
 
 console.log(process.env.REACT_APP_OPENAI_API_KEY);
 const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY, dangerouslyAllowBrowser: true }); // Initialize OpenAI instance
@@ -63,6 +64,21 @@ class ActionProvider {
     }
 
     metaGptHandler = async(params) => {
+
+    
+        console.log("BEGIN LOADING SYMBOL")
+        const loading = this.createChatBotMessage(
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '1vh', backgroundColor: 'white', paddingTop: '40px', margin: "-10px" }}>
+
+            <ReactLoading type="spin" color="black"
+        height={80} width={40}/>
+        
+        </div>
+    );
+        // this.setChatbotMessage(loading);
+        this.setState((prev) => ({ ...prev, messages: [...prev.messages, loading], }))
+
+
         let postBody = {};
         if (params) {
             postBody = JSON.stringify({
@@ -105,6 +121,15 @@ class ActionProvider {
                 const message_err = "Uh Oh! Something went wrong. Please try again later.";
                 this.setChatbotMessage(message_err);
             });
+
+        console.log("======= REMOVE LOADING")
+        this.setState((prev) => {
+            // Remove Loading here
+            const newPrevMsg = prev.messages.slice(0, -1)
+            return { ...prev, messages: [...newPrevMsg], }
+        })
+        console.log("====== END REMOVE LOADING")
+
         if (api_response.status == "Success") {
             const message_status = this.createChatBotMessage("The following code changes have been made to the Truman Platform!")
             let engineer_string = "Generated code " + "\n`" + api_response.response.Engineer["Generated Code Snippet"] + "`\n in the location " + api_response.response.Engineer["Location"];
