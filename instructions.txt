@@ -1,0 +1,20 @@
+[CONTENT]
+{
+  "File Name": "views/partials/actorPost.pug",
+  "Code": ".div(class='actor-feelings')\n  p How is #{val.actor.profile.name} feeling?",
+  “Before”:  “ a.ui.basic.red.left.pointing.label.count=val.likes”
+  “After”: “if val.comments.length > 0
+    .content
+      .ui.comments
+"
+}
+[/CONTENT]
+
+[CONTENT]
+{
+  "File Name": "public/css/script.css",
+  "Code": "\n.grey-box {\n    background-color: #f2f2f2;\n    color: #333;\n    padding: 10px;\n    margin: 10px 0;\n    border-radius: 4px;\n}\n\n.grey-box p {\n    margin: 0;\n    padding: 0;\n    line-height: 1.5;\n}",
+  “Before”: ".modal .ui.form .grouped.fields .field {\n    margin-left: 5px !important;\n}"
+  “After”: "None"
+}
+[/CONTENT]

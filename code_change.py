@@ -1,4 +1,5 @@
 import json
+import re
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -37,19 +38,35 @@ def process_instructions(instructions):
         write_file(file_path, updated_content)
         print(f"Updated {file_path} successfully.")
 
-instructions = [
-    {
-        "File Name": "views/partials/actorPost.pug",
-        "Code": ".div(class='actor-feelings')\n  p How is #{val.actor.profile.name} feeling?",
-        "Before": "a.ui.basic.red.left.pointing.label.count=val.likes",
-        "After": "if val.comments.length > 0\n    .content\n      .ui.comments"
-    },
-    {
-        "File Name": "public/css/script.css",
-        "Code": "\n.grey-box {\n    background-color: #f2f2f2;\n    color: #333;\n    padding: 10px;\n    margin: 10px 0;\n    border-radius: 4px;\n}\n\n.grey-box p {\n    margin: 0;\n    padding: 0;\n    line-height: 1.5;\n}",
-        "Before": ".modal .ui.form .grouped.fields .field {\n    margin-left: 5px !important;\n}"
-    }
-]
+def read_and_parse_instructions(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+    content = content.replace('“', '"').replace('”', '"')
+    blocks = re.findall(r'\[CONTENT\](.*?)\[/CONTENT\]', content, re.DOTALL)
+    instructions = []
+    for block in blocks:
+        if not block.strip():
+            continue 
+        file_name_match = re.search(r'"File Name":\s*"([^"]+)"', block)
+        code_match = re.search(r'"Code":\s*"([^"]+)"', block)
+        before_match = re.search(r'"Before":\s*"([^"]+)"', block)
+        after_match = re.search(r'"After":\s*"([^"]+)"', block)
 
-# Process each instruction
+        if file_name_match and code_match:
+            instruction = {
+                "File Name": file_name_match.group(1),
+                "Code": code_match.group(1).replace('\\n', '\n').strip()
+            }
+            if before_match and before_match.group(1) != "None":
+                instruction["Before"] = before_match.group(1).replace('\\n', '\n').strip()
+            if after_match and after_match.group(1) != "None":
+                instruction["After"] = after_match.group(1).replace('\\n', '\n').strip()
+
+            instructions.append(instruction)
+
+    return instructions
+
+file_path = 'instructions.txt'
+instructions = read_and_parse_instructions(file_path)
+print(instructions)
 process_instructions(instructions)
