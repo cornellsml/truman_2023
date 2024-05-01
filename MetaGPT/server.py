@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 import requests
 import asyncio
 import code_gen_system
+# import code_change
 
 
 app = Flask(__name__)
@@ -14,6 +15,25 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @cross_origin()
 def index():
     return "Hello TrumanAI Server"
+
+@app.route('/code-implement', methods=['POST'])
+@cross_origin()
+def implement():
+    print(request.json)
+    try:
+        # output = asyncio.run(code_change())
+        resp = "Code Change Implemented"
+        status = "success"
+    except Exception as e:
+        resp = f"Something went wrong with your request. Please try again. Error: {str(e)}"
+        status = "Fail"
+    
+    server_response = { 
+            "status" : status, 
+            "response" : resp
+    }
+
+    return jsonify(server_response)
 
 @app.route('/code-gen', methods=['POST'])
 @cross_origin()

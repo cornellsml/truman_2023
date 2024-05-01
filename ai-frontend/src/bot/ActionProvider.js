@@ -140,14 +140,21 @@ class ActionProvider {
             const message_status = this.createChatBotMessage("I'm not able to change the code base at this time. Please try again later.");
             this.setChatbotMessage(message_status);
         }
-        console.log(api_response.response);
-        if (this.stateRef.chatID == null){
-            var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".", {delay: 700});
+        if (this.stateRef.trumanCodeLaunch == null && api_response.status == "Success") {
+            const message = this.createChatBotMessage("Would you like to implement these changes to the Truman App?")
+            this.setChatbotMessage(message)
         }
         else {
-            var message2 = this.createChatBotMessage("If you'd like to save the chat history of " + this.stateRef.chatID + ", type \"yes\". If not, respond \"no\" or \"rename\" to save under a new chat ID", {delay: 700});
+            this.HandleLaunch(false)
         }
-        this.setChatbotMessage(message2);
+        // console.log(api_response.response);
+        // if (this.stateRef.chatID == null){
+        //     var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".", {delay: 700});
+        // }
+        // else {
+        //     var message2 = this.createChatBotMessage("If you'd like to save the chat history of " + this.stateRef.chatID + ", type \"yes\". If not, respond \"no\" or \"rename\" to save under a new chat ID", {delay: 700});
+        // }
+        // this.setChatbotMessage(message2);
     }
 
     sequenceHandlerTruman = async(prompt, userMessage = "", invest = true, rounds = true) => {
@@ -204,11 +211,67 @@ class ActionProvider {
         }
     }
 
+    HandleLaunch = async(launch) => {
+        console.log("in launch", launch)
+        this.stateRef.trumanCodeLaunch = launch
+        let API_FAIL = null
+        if (launch == true) {
+            const message = this.createChatBotMessage("Okay! Running changes", {delay: 700});
+            this.setChatbotMessage(message)
+
+            // BEGIN LOADING
+            const loading = this.createChatBotMessage(
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '1vh', backgroundColor: 'white', paddingTop: '40px', margin: "-10px" }}>
+                    <ReactLoading type="spin" color="black" height={80} width={40}/>
+                </div>
+            );
+            this.setState((prev) => ({ ...prev, messages: [...prev.messages, loading], }))
+            
+            // TODO: CALL CODE GEN CHANGE API (FAILS)
+            let api_response = "";
+            const postBody = this.stateRef.agentLogs.slice(-1)
+        await axios.post("http://localhost:5000/code-implement", postBody, { headers: { 'Content-Type': 'application/json' } })
+            .then(resp => {
+                api_response = resp.data;
+                console.log("API RESPONSE 2:")
+                console.log(api_response);
+            }).catch(err => {
+                API_FAIL = true
+                this.setState((prev) => {
+                    const newPrevMsg = prev.messages.slice(0, -1)
+                    return { ...prev, messages: [...newPrevMsg], }
+                })
+                console.log(err);
+                const message_err = "Uh Oh! Something went wrong. Please try again later.";
+            });
+
+            if (API_FAIL != true) {
+                // ENDING LOADING
+                this.setState((prev) => {
+                    const newPrevMsg = prev.messages.slice(0, -1)
+                    return { ...prev, messages: [...newPrevMsg], }
+                })
+            }
+            const message2 = this.createChatBotMessage("Done!", {delay: 700});
+            this.setChatbotMessage(message2)
+        }
+
+
+        if (this.stateRef.chatID == null){
+            var message2 = this.createChatBotMessage("If you'd like to save this chat history, please provide a chat ID or label. If not, respond \"no\".", {delay: 700});
+        }
+        else {
+            var message2 = this.createChatBotMessage("If you'd like to save the chat history of " + this.stateRef.chatID + ", type \"yes\". If not, respond \"no\" or \"rename\" to save under a new chat ID", {delay: 700});
+        }
+        this.setChatbotMessage(message2);
+    }
+
     resetTrumanState = () => {
         this.stateRef.trumanCodeGenSequence = false
         this.stateRef.trumanCodeGenData.message = null
         this.stateRef.trumanCodeGenData.investment = null
         this.stateRef.trumanCodeGenData.n_rounds = null
+        this.stateRef.trumanCodeLaunch = null
     }
 
     messageHandlerGpt = async(userInput) => {

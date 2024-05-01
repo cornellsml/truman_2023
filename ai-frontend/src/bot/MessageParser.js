@@ -54,6 +54,13 @@ class MessageParser {
                 this.actionProvider.sequenceHandlerTruman(true, message, null, false);
             }
             this.actionProvider.sequenceHandlerTruman(true, message, null, true);
+        } else if (this.state.trumanCodeLaunch == null) {
+            if (lowerMsg.includes("yes")) {
+                this.actionProvider.HandleLaunch(true)
+            }
+            else {
+                this.actionProvider.HandleLaunch(false)
+            }
         } else if (this.state.chatID == null) {
             if (!lowerMsg.includes("no")) {
                 // log data and messages if yes & chatID given
