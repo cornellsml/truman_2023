@@ -6,8 +6,7 @@
       "Commenting",
       "User interactions",
       "Data analytics"
-    ],
-    "userDemographics": ["Researchers", "Participants"]
+    ]
   },
   "terminology": {
     "Actors": "Actors are the simulated users on the platform that research participants believe are real people. You'll create personas for all actors in the simulation. This includes information such as usernames, names, and profile photos.",
@@ -18,14 +17,14 @@
   "Modification Types": [
     "Experimental condition assignment",
     "Posts metadata addition",
-    "Interface change only (to actor post), experimental condition based",
+    "Interface change only (to actor post)",
     "Feature addition (not to an actor post) But no recording needed",
     "Rendering newsfeed change",
     "Feature addition (to actor post)",
     "Add a page w recorded functionality"
   ],
   "Technical guidance": [
-    "For 'Experimental condition assignment' type of change, the relevant files are 'controllers/user.js' and 'models/User.js'",
-    "There is no specific style preference for the platform"
+    "For 'Experimental condition assignment' type of change, reference file 'models/User.js' (DON'T MODIFY IT). Then change the file 'controllers/user.js'.",
+    "There is no specific shade or color or font style or size preference for the text/platform"
   ]
 }

@@ -38,6 +38,17 @@ def parse_data(rsp):
     parsed_data = CustomDecoder(strict=False).decode(content)
     return parsed_data
 
+def dev_parse_data(rsp):
+    pattern = r"Developer:\s*\[CONTENT\](\s*\{.*?\}\s*)\[/CONTENT\]"
+    matches = re.findall(pattern, rsp)
+    for match in matches:
+        if match:
+            content = match
+            break
+
+    parsed_data = CustomDecoder(strict=False).decode(content[1])
+    return parsed_data
+
 class AnalzeRequirement(Action):
 
     PROMPT_TEMPLATE: str = """
@@ -140,7 +151,7 @@ class SumarizeRequirement(Action):
     Role: You are a TechLead of a web application 'Truman Platform'. You are receiving the conversation between the project manager and the social scientist (SpecWriter). Your task is to summarize the requirement.
     ATTENTION: Use '##' to SPLIT SECTIONS, not '#'.
     ## Requirement: Provided as Python list[str]. Output the summarized requirement.
-    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like 'Format Example', and only output the json inside this tag, nothing else.
+    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like "Format Example", and only output the json inside this tag, nothing else.
     """
 
     FORMAT_EXAMPLE: str = """
@@ -228,7 +239,7 @@ class RAGSearch(Action):
 
     ## Files: Provided as Python list[str]. Output the relevant files.
 
-    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like Format Example, and only output the json inside this tag, nothing else.
+    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like "Format Example", and only output the json inside this tag, nothing else.
     """
     QUESTION: str = """
     ## Requirement: {requirement}
@@ -293,18 +304,18 @@ class TechLead(Role):
         super().__init__(**kwargs)
         self._set_react_mode("by_order")
         self.set_actions([SumarizeRequirement, RAGSearch, WritePlan])
-        self._watch([WriteSpec])
+        self._watch([UserRequirement])
     
     async def _act(self) -> Message:
         logger.info(f"{self._setting}: to do {self.rc.todo}({self.rc.todo.name})")
         todo = self.rc.todo
 
         if todo.name == "SumarizeRequirement":
-            contexts = self.get_memories(k=2)
-            specification = contexts[0].content
-            answer = contexts[1].content
-            conversation = f"Project Manager: {specification}; Social Scientist: {answer}"
-            print("DEBUG:", conversation)
+            conversation = self.get_memories(k=1)
+            # specification = contexts[0].content
+            # answer = contexts[1].content
+            # conversation = f"Project Manager: {specification}; Social Scientist: {answer}"
+            # print("DEBUG:", conversation)
             requirement = await todo.run(conversation)
             msg = Message(content=requirement, role=self.profile, cause_by=type(todo))
             self.rc.memory.add(msg)
@@ -341,7 +352,9 @@ class WriteCode(Action):
 
     ## Code: Provided as Python str. Output the generated code snippet.
 
-    ## Location: Provided as Python str. Output the location of the code snippet in the file.
+    ## Before: Provided as Python str. Output the 3 lines of code before the generated code snippet.
+
+    ## After: Provided as Python str. Output the 3 lines of code after the generated code snippet.
 
     output only the generated code snippet as a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like Format Example,
     and only output the json inside this tag, nothing else
@@ -351,7 +364,8 @@ class WriteCode(Action):
     [CONTENT]
     "File Name": "",
     "Code": "",
-    "Location": ""
+    "Before": "",
+    "After": ""
     [/CONTENT]
     """
     name: str = "WriteCode"
@@ -390,6 +404,30 @@ class Developer(Role):
         return msg
 
 async def main(
+    msg: str = """
+    Project Manager: [CONTENT]
+{
+    "General Requirement": "add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.' then have 2 buttons: a green button that says 'Yes, share it' and a red button that says 'No, don't share it'. If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.",
+    "Type of Change": [
+        "Feature addition (not to an actor post) But no recording needed"
+    ],
+    "Detailed Specification": [
+        "Implement a popup window that appears after a user clicks the 'Submit' button for photo upload.",
+        "The popup window should contain the message: 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.'",
+        "Include two buttons within the popup: a green button labeled 'Yes, share it' and a red button labeled 'No, don't share it'.",
+        "If the user clicks the 'Yes, share it' button, proceed with the photo upload process.",
+        "If the user clicks the 'No, don't share it' button, cancel the photo upload process."
+    ],
+    "Clarifications Needed": [
+        "Should the popup window have a specific design or theme consistent with the current platform aesthetics?",
+        "Is there a need for a feedback message or notification to the user after they decide to share or not share the photo?",
+        "Should the photo upload process have a loading or progress indicator?",
+        "Are there any specific conditions or settings under which this popup should not be triggered?"
+    ]
+}
+[/CONTENT]; Social Scientist: 1. no 2. no 3. no 4.no
+    """,    
+    
     # msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster's name. ",
     
     # msg: str = "When a user creates an account, randomly assign them to one of 6 experimental conditions: 'view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'. This information should not be displayed to the user.",
@@ -430,9 +468,9 @@ async def main(
     # for each post, when they scroll past a post, display a grey box over the bottom quarter of the picture. The grey box should span the entire width of the picture and display the text "You've read this!". Also, it should display the original poster's profile picture, and the text "Jane Doe has been notified", where "Jane Doe" is customized by the original poster's name. 
     # """,
 
-    msg: str = """
-    add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text "Do you really want to share this image? Everyone on EatSnap.Love could potentially see this." then have 2 buttons: a green button that says "Yes, share it" and a red button that says "No, don't share it". If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.
-    """,
+    # msg: str = """
+    # add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text "Do you really want to share this image? Everyone on EatSnap.Love could potentially see this." then have 2 buttons: a green button that says "Yes, share it" and a red button that says "No, don't share it". If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.
+    # """,
 
     # msg: str = """
     # Show the post that has the comment labeled "ambig_flag" or "unambig_flag" at the top of the timeline each day. 
@@ -466,8 +504,6 @@ async def main(
     team = Team()
     team.hire(
         [
-            ProjectManager(),
-            SpecWriter(is_human=True),
             TechLead(),
             Developer()
         ]
@@ -475,7 +511,13 @@ async def main(
 
     team.invest(investment=investment)
     team.run_project(msg)
-    await team.run(n_round=n_round)
+    msg = await team.run(n_round=n_round)
+    # print(msg)
+    start = msg.find("Developer: ['") + len("Developer: ['")
+    end = msg.find("']", start)
+    developer_content = msg[start:end].strip()
+    # print(developer_content)
+    return developer_content
 
 if __name__ == '__main__':
     fire.Fire(main)
