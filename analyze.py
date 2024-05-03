@@ -97,7 +97,7 @@ class ProjectManager(Role):
 
         return msg
 
-def main(
+async def main(
     # msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster's name. ",
     
     # msg: str = "When a user creates an account, randomly assign them to one of 6 experimental conditions: 'view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'. This information should not be displayed to the user.",
@@ -175,7 +175,7 @@ def main(
     # team.run_project(msg)
     # await team.run(n_round=n_round)
     Role = ProjectManager()
-    result = asyncio.run(Role.run(msg))
+    result = await Role.run(msg)
     return result
 
 if __name__ == '__main__':
