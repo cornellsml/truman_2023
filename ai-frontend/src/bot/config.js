@@ -15,10 +15,15 @@ const config = {
     ],
     state: {
         trumanCodeGenSequence: false,
+        trumanCodeGenStage: {analyze: false, develop: false},
+        trumanClarifyData: {
+            clarifyTxt: null,
+            clarification: null,
+        },
         trumanCodeGenData: {
             message: null,
             investment: null,
-            n_rounds: null
+            n_rounds: null,
         },
         agentLogs: [],
         chatID: null

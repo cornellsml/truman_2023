@@ -1,6 +1,6 @@
 from flask import Flask, request, make_response, jsonify
 import json
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import requests
 import asyncio
 import main
@@ -15,7 +15,27 @@ CORS(app)
 def index():
     return "Hello TrumanAI Server"
 
+@app.route('/code-implement', methods=['POST'])
+@cross_origin()
+def implement():
+    print(request.json)
+    try:
+        # output = asyncio.run(code_change())
+        resp = "Code Change Implemented"
+        status = "success"
+    except Exception as e:
+        resp = f"Something went wrong with your request. Please try again. Error: {str(e)}"
+        status = "Fail"
+    
+    server_response = { 
+            "status" : status, 
+            "response" : resp
+    }
+
+    return jsonify(server_response)
+
 @app.route('/analyze', methods=['POST'])
+@cross_origin()
 def get_query_TL():
     status = ""
     response_metagpt = ""
@@ -50,12 +70,14 @@ def get_query_TL():
     
 
 @app.route('/develop', methods=['POST'])
+@cross_origin()
 def response_dev():
     status = ""
     response_metagpt = ""
     try:
         #metagpt parameters
-        msg = request.json.get("message", """
+        # Social Scientist: 1. no 2. no 3. no 4.no
+        pm_string = request.json.get("projectManager", """
     Project Manager: [CONTENT]
 {
     "General Requirement": "add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.' then have 2 buttons: a green button that says 'Yes, share it' and a red button that says 'No, don't share it'. If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.",
@@ -76,13 +98,17 @@ def response_dev():
         "Are there any specific conditions or settings under which this popup should not be triggered?"
     ]
 }
-[/CONTENT]; Social Scientist: 1. no 2. no 3. no 4.no
+[/CONTENT];
     """)
+        clarification = request.json.get("clarification", "1. no 2. no 3. no 4. no")
         investment = request.json.get("investment", 20.0)
         n_round = request.json.get("n_round", 3)
 
+        pm_final_string = pm_string + " Social Scientist: " + clarification
+        print("FINAL STRING PM")
+        print(pm_final_string)
         #metagpt call
-        output = asyncio.run(develop.main(msg=msg, investment=investment, n_round=n_round))
+        output = asyncio.run(develop.main(msg=pm_final_string, investment=investment, n_round=n_round))
         json_output = json_transform_develop(str(output))
         print(json_output)
         response_metagpt = json.loads(json_output)

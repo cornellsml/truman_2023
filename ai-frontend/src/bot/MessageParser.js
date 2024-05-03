@@ -25,7 +25,12 @@ class MessageParser {
             // Check for specific commands before sending to GPT
             else if (lowerMsg.includes("hello world")) {
                 this.actionProvider.messageHandlerHelloWorld();
-            } else {
+            } 
+            else if (lowerMsg.includes("clear") && lowerMsg.includes("chat")) {
+                this.actionProvider.clearChat();
+            }
+            
+            else {
                 // For all other messages, use GPT-3.5 handler
                 this.actionProvider.messageHandlerGpt(message);
             }
@@ -44,11 +49,21 @@ class MessageParser {
             }
             this.actionProvider.sequenceHandlerTruman(true, message, true, null);
         } else if (this.state.trumanCodeGenData.n_rounds == null) {
-            // Handle user provided n_round
+            
             if (lowerMsg.includes("no") || lowerMsg.includes("none")) {
                 this.actionProvider.sequenceHandlerTruman(true, message, null, false);
             }
             this.actionProvider.sequenceHandlerTruman(true, message, null, true);
+        } else if (this.state.trumanClarifyData.clarification == null) {
+            this.actionProvider.sequenceHandlerTruman(true, message, true, true, lowerMsg)
+        }
+        else if (this.state.trumanCodeLaunch == null) {
+            if (lowerMsg.includes("yes")) {
+                this.actionProvider.HandleLaunch(true)
+            }
+            else {
+                this.actionProvider.HandleLaunch(false)
+            }
         } else if (this.state.chatID == null) {
             if (!lowerMsg.includes("no")) {
                 // log data and messages if yes & chatID given
@@ -62,11 +77,16 @@ class MessageParser {
         }
         else if (this.state.chatID != null & this.state.trumanCodeGenSequence == true) {
             // continue to log data once id given
-            const ID_update = this.updateChatID(this.state.chatID)
-            if (!lowerMsg.includes("no")) {
-                this.actionProvider.saveChatHandler(ID_update);
+            if (lowerMsg.includes("rename")) {
+                this.actionProvider.removeChatId();
             }
-            this.actionProvider.saveAgentResponseHandler(ID_update);
+            else {
+                if (!lowerMsg.includes("no")) {
+                    this.actionProvider.saveChatHandler(this.state.chatID);
+                }
+
+                this.actionProvider.saveAgentResponseHandler(this.state.chatID);
+            }
         }
     }
 
