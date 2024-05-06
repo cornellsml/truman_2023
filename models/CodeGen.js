@@ -2,14 +2,20 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const engineerSchema = new Schema({
-    code: String,
-    location: String
+    Code: String,
+    FileName: String,
+    Before: String, 
+    After: String
+    
 });
 
 const projectManagerSchema = new Schema({
-    plan: [[String]],
-    files: [String]
+    Clarifications: [String],
+    Specification: [String],
+    Requirement: String,
+    Change_type: [String]
 });
+
 
 const codeGenSchema = new Schema({
     user: { type: Schema.ObjectId, ref: 'User' },

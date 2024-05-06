@@ -11,15 +11,14 @@ exports.postAgentResponses = async(req, res, next) => {
 
         const agentResponseFiltered = agentResponse.map(data => ({
             ...data,
-            engineer: {
-              code: data.engineer["Generated Code Snippet"],
-              location: data.engineer.Location
-            },
             projectManager: {
-              plan: data.projectManager["Implementation Plan"],
-              files: data.projectManager["Relevant Files"]
+              Clarifications: data.projectManager["Clarifications Needed"],
+              Specification: data.projectManager["Detailed Specification"],
+              Requirement: data.projectManager["General Requirement"],
+              Change_type: data.projectManager["Type of Change"]
             }
           }));
+
         
         console.log("AgentLogging sent to the DB")
         console.log(agentResponseFiltered)
@@ -30,8 +29,21 @@ exports.postAgentResponses = async(req, res, next) => {
             agentResponses: agentResponseFiltered
         };
         console.log(codeGenDetail)
-        const code_gen = new CodeGen(codeGenDetail);
-        await code_gen.save();
+
+        console.log("ID :" + req.body.id)
+        const existing_id = await CodeGen.findOne({ id: req.body.id }).exec();
+        console.log("Existing Id")
+        console.log(existing_id)
+
+        if (existing_id) {
+          existing_id.agentResponses = agentResponseFiltered;
+          await existing_id.save();
+        }
+        else {
+          const code_gen = new CodeGen(codeGenDetail);
+          await code_gen.save();
+        }
+
         res.send({ result: "success" });
     } catch (err) {
         next(err);
