@@ -115,7 +115,8 @@ class ActionProvider {
             this.setChatbotMessage(message_status);
             for (let i = 0; i < api_response.response.length; i++) {
                 let code_str = String((i+1)) + ") " + "Generated code " + "\n`" + api_response.response[i]["Code"] + "`\n in the location " + api_response.response[i]["FileName"]
-                let code_msg = this.createChatBotMessage(code_str, {delay: 700});
+                let code_html = <div>${i+1}) Generated code <br/><code>${api_response.response[i]["Code"]}</code><br/> in the location ${api_response.response[i]["FileName"]}</div>
+                let code_msg = this.createChatBotMessage(code_html, {delay: 700});
                 console.log("Message " + i + ") " + code_str)
                 this.setChatbotMessage(code_msg);
             }
@@ -278,7 +279,14 @@ class ActionProvider {
         if (api_response.status == "Success") {
             const message_status = this.createChatBotMessage("The following code changes have been made to the Truman Platform!", {delay: 700})
             let engineer_string = "Generated code " + "\n`" + api_response.response.Engineer["Generated Code Snippet"] + "`\n in the location " + api_response.response.Engineer["Location"];
-            const message_engineer = this.createChatBotMessage(engineer_string, {delay: 700});
+            let engineer_html = <p>
+            Generated code 
+            <span style="font-family: monospace; color: lightgrey;">
+              ${api_response.response.Engineer["Generated Code Snippet"]}
+            </span>
+            in the location ${api_response.response.Engineer["Location"]}
+          </p>
+            const message_engineer = this.createChatBotMessage(engineer_html, {delay: 700});
             this.setChatbotMessage(message_status);
             this.setChatbotMessage(message_engineer); 
         } else {
