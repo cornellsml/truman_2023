@@ -148,9 +148,11 @@ class SumarizeRequirement(Action):
 
     ## Format Example: {FORMAT_EXAMPLE}
     -----
-    Role: You are a TechLead of a web application 'Truman Platform'. You are receiving the conversation between the project manager and the social scientist (SpecWriter). Your task is to summarize the requirement.
+    Role: You are a TechLead of a web application 'Truman Platform'. You are receiving the conversation between the project manager and the social scientist. Your task is to summarize the requirement.
     ATTENTION: Use '##' to SPLIT SECTIONS, not '#'.
-    ## Requirement: Provided as Python list[str]. Output the summarized requirement.
+
+    ## Requirement: Provided as Python list[str]. Output the summarized requirement follow the "Format Example".
+
     output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like "Format Example", and only output the json inside this tag, nothing else.
     """
 
@@ -277,7 +279,7 @@ class WritePlan(Action):
 
     # Implementation Plan: Provided as Python list[list[str]]. Output the implementation plan. Each item in the list should be a list of two strings: the first string is the path to the file that needs to be modified, and the second string is the plan for that file.
 
-    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like 'Format Example', and only output the json inside this tag, nothing else. The key of the JSON should be 'Implementation Plan'.
+    output a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like "Format Example", and only output the json inside this tag, nothing else. The key of the JSON should be 'Implementation Plan'.
     """
 
     FORMAT_EXAMPLE: str = """
@@ -352,9 +354,7 @@ class WriteCode(Action):
 
     ## Code: Provided as Python str. Output the generated code snippet.
 
-    ## Before: Provided as Python str. Output the 3 lines of code before the generated code snippet.
-
-    ## After: Provided as Python str. Output the 3 lines of code after the generated code snippet.
+    ## Instructions: Provided as Python str. Output the instructions of location of the code snippet in the file.
 
     output only the generated code snippet as a properly formatted JSON, wrapped inside [CONTENT][/CONTENT] like Format Example,
     and only output the json inside this tag, nothing else
@@ -364,8 +364,7 @@ class WriteCode(Action):
     [CONTENT]
     "File Name": "",
     "Code": "",
-    "Before": "",
-    "After": ""
+    "Instruction": ""
     [/CONTENT]
     """
     name: str = "WriteCode"
@@ -404,43 +403,181 @@ class Developer(Role):
         return msg
 
 async def main(
-    msg: str = """
-    Project Manager: [CONTENT]
-{
-    "General Requirement": "add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.' then have 2 buttons: a green button that says 'Yes, share it' and a red button that says 'No, don't share it'. If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.",
-    "Type of Change": [
-        "Feature addition (not to an actor post) But no recording needed"
-    ],
-    "Detailed Specification": [
-        "Implement a popup window that appears after a user clicks the 'Submit' button for photo upload.",
-        "The popup window should contain the message: 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.'",
-        "Include two buttons within the popup: a green button labeled 'Yes, share it' and a red button labeled 'No, don't share it'.",
-        "If the user clicks the 'Yes, share it' button, proceed with the photo upload process.",
-        "If the user clicks the 'No, don't share it' button, cancel the photo upload process."
-    ],
-    "Clarifications Needed": [
-        "Should the popup window have a specific design or theme consistent with the current platform aesthetics?",
-        "Is there a need for a feedback message or notification to the user after they decide to share or not share the photo?",
-        "Should the photo upload process have a loading or progress indicator?",
-        "Are there any specific conditions or settings under which this popup should not be triggered?"
-    ]
-}
-[/CONTENT]; Social Scientist: 1. no 2. no 3. no 4.no
-    """,    
+#     msg: str = """
+#     Project Manager: [CONTENT]
+# {
+#     "General Requirement": "add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.' then have 2 buttons: a green button that says 'Yes, share it' and a red button that says 'No, don't share it'. If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.",
+#     "Type of Change": [
+#         "Feature addition (not to an actor post) But no recording needed"
+#     ],
+#     "Detailed Specification": [
+#         "Implement a popup window that appears after a user clicks the 'Submit' button for photo upload.",
+#         "The popup window should contain the message: 'Do you really want to share this image? Everyone on EatSnap.Love could potentially see this.'",
+#         "Include two buttons within the popup: a green button labeled 'Yes, share it' and a red button labeled 'No, don't share it'.",
+#         "If the user clicks the 'Yes, share it' button, proceed with the photo upload process.",
+#         "If the user clicks the 'No, don't share it' button, cancel the photo upload process."
+#     ],
+#     "Clarifications Needed": [
+#         "Should the popup window have a specific design or theme consistent with the current platform aesthetics?",
+#         "Is there a need for a feedback message or notification to the user after they decide to share or not share the photo?",
+#         "Should the photo upload process have a loading or progress indicator?",
+#         "Are there any specific conditions or settings under which this popup should not be triggered?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4.no
+#     """,    
     
-    # msg: str = "Add a grey box above each comment box in actor post. The grey box include a feeling prompt question: “How is Jane Done feeling?”. Each prompt was customized by the poster's name. ",
-    
-    # msg: str = "When a user creates an account, randomly assign them to one of 6 experimental conditions: 'view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'. This information should not be displayed to the user.",
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "When a user creates an account, randomly assign them to one of 6 experimental conditions: 'view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'. This information should not be displayed to the user.",
+#     "Type of Change": ["Experimental condition assignment"],
+#     "Detailed Specification": [
+#         "Modify the account creation process to include a step that randomly assigns a new user to one of six predefined experimental conditions.",
+#         "Ensure the experimental condition assigned to a user is stored in the user's profile in the database but is not visible to the user on the platform interface.",
+#         "The six experimental conditions to be randomly assigned are: 'view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'.",
+#         "Update the 'controllers/user.js' file to implement the random assignment logic during the account creation process."
+#     ],
+#     "Clarifications Needed": [
+#         "Should the experimental condition assignment influence the user's experience on the platform? If so, how?",
+#         "Is there a need to track or log the assignment of experimental conditions for further analysis?",
+#         "How should the system handle users who may create multiple accounts? Should they be assigned the same condition or a new random condition for each account?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no
+#     """,
 
-    # msg: str = """When a user creates an account, randomly assign them to one of 4 experimental conditions: "none:view", "empathy:view", "none:none", "empathy:none". This information should not be displayed to the user.""",
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "When a user creates an account, randomly assign them to one of 4 experimental conditions: \"none:view\", \"empathy:view\", \"none:none\", \"empathy:none\". This information should not be displayed to the user.",
+#     "Type of Change": ["Experimental condition assignment"],
+#     "Detailed Specification": [
+#         "Upon account creation, the system must randomly assign the user to one of the four specified experimental conditions.",
+#         "The assignment process should ensure an even distribution across the four conditions to the extent possible.",
+#         "The assigned condition must be stored in the user's profile for internal use but must not be visible to the user at any point.",
+#         "Ensure that the condition assignment logic is implemented in a way that allows for future conditions to be added or modified with minimal changes to the codebase.",
+#         "The condition assignment should be logged for research tracking purposes, including the user ID and the assigned condition."
+#     ],
+#     "Clarifications Needed": [
+#         "Is there a preferred method or algorithm for randomizing the assignment to the experimental conditions?",
+#         "Should the system provide any feedback to the researchers or administrators regarding the distribution of users across the experimental conditions?",
+#         "Will there be any need to change a user's experimental condition post-assignment, either manually or automatically, based on certain criteria?",
+#         "Are there specific data privacy or security measures that need to be considered when storing the experimental condition assigned to each user?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4. no
+#     """,
     
-    # msg: str = """
-    # When a user creates an account, randomly assign them to one of 6 experimental conditions: "users:ambiguous", "ai:ambiguous", "none:ambiguous", "users:unambiguous", "ai:unambiguous", "none:unambiguous". This information should not be displayed to the user.
-    # """,
+#     msg: str = """
+#     Project Manager: [CONTENT]
+# {
+#     "General Requirement": "When a user creates an account, randomly assign them to one of 6 experimental conditions: \"users:ambiguous\", \"ai:ambiguous\", \"none:ambiguous\", \"users:unambiguous\", \"ai:unambiguous\", \"none:unambiguous\". This information should not be displayed to the user.",
+#     "Type of Change": ["Experimental condition assignment"],
+#     "Detailed Specification": [
+#         "Upon account creation, the system must automatically and randomly assign the user to one of the six predefined experimental conditions.",
+#         "The assignment process should ensure an even distribution across the six conditions to the extent possible.",
+#         "The experimental condition assigned to a user should be stored in a manner that is not visible to the user but can be accessed by researchers for analysis.",
+#         "Ensure that the assignment logic is implemented in a way that does not interfere with the user's interaction with the platform or the overall user experience.",
+#         "The assignment should be persistent for the duration of the user's participation in the study to ensure consistent experimental conditions."
+#     ],
+#     "Clarifications Needed": [
+#         "Is there a preferred method or algorithm for randomizing the assignment to the experimental conditions to ensure even distribution?",
+#         "Should the system log or track the assignment of users to experimental conditions for auditing or analysis purposes?",
+#         "Are there any specific actions or behaviors within the platform that should trigger a re-evaluation or change of the assigned experimental condition?",
+#         "How should the system handle users who may participate in the study multiple times? Should they be assigned the same condition or re-randomized upon each participation?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4. no
+#     """,
+    
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "When a user creates an account, randomly assign them to one of 4 experimental conditions: \"none:view\", \"empathy:view\", \"none:none\", \"empathy:none\". This information should not be displayed to the user.",
+#     "Type of Change": ["Experimental condition assignment"],
+#     "Detailed Specification": [
+#         "Upon account creation, the system must randomly assign the user to one of the four specified experimental conditions.",
+#         "The assignment process should ensure an even distribution across the four conditions to the extent possible.",
+#         "The assigned condition must be stored in the user's profile for internal use but must not be visible to the user at any point.",
+#         "Ensure that the condition assignment logic is implemented in a way that allows for future conditions to be added or modified with minimal changes to the codebase.",
+#         "The condition assignment should be logged for research tracking purposes, including the user ID and the assigned condition."
+#     ],
+#     "Clarifications Needed": [
+#         "Is there a preferred method or algorithm for randomizing the assignment to the experimental conditions?",
+#         "Should the system provide any feedback to the researchers or administrators regarding the distribution of users across the experimental conditions?",
+#         "Will there be any need to change a user's experimental condition post-assignment, either manually or automatically, based on certain criteria?",
+#         "Are there specific data privacy or security measures that need to be considered when storing the experimental condition assigned to each user?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4. no
+#     """,
 
-    # msg: str = """
-    # When a user creates an account, randomly assign them to one of 4 experimental conditions: "5:nudge", "5:none", "80:nudge", "80:none". This information should not be displayed to the user.
-    # """,
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "When a user creates an account, randomly assign them to one of 6 experimental conditions: \"users:ambiguous\", \"ai:ambiguous\", \"none:ambiguous\", \"users:unambiguous\", \"ai:unambiguous\", \"none:unambiguous\". This information should not be displayed to the user.",
+#     "Type of Change": ["Experimental condition assignment"],
+#     "Detailed Specification": [
+#         "Upon account creation, the system must automatically and randomly assign the user to one of the six predefined experimental conditions.",
+#         "The assignment process should ensure an even distribution across the six conditions to the extent possible.",
+#         "The experimental condition assigned to a user should be stored in a manner that is not visible to the user but can be accessed by researchers for analysis.",
+#         "Ensure that the assignment logic is implemented in a way that does not interfere with the user's interaction with the platform or the overall user experience.",
+#         "The assignment should be persistent for the duration of the user's participation in the study to ensure consistent experimental conditions."
+#     ],
+#     "Clarifications Needed": [
+#         "Is there a preferred method or algorithm for randomizing the assignment to the experimental conditions to ensure even distribution?",
+#         "Should the system log or track the assignment of users to experimental conditions for auditing or analysis purposes?",
+#         "Are there any specific actions or behaviors within the platform that should trigger a re-evaluation or change of the assigned experimental condition?",
+#         "How should the system handle users who may participate in the study multiple times? Should they be assigned the same condition or re-randomized upon each participation?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4. no
+#     """,
+
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "When a user creates an account, randomly assign them to one of 3 experimental conditions: \"5\", \"4\", \"2\". This information should not be displayed to the user.",
+#     "Type of Change": ["Experimental condition assignment"],
+#     "Detailed Specification": [
+#         "Upon account creation, the system must automatically and randomly assign the user to one of three predefined experimental conditions labeled as '5', '4', or '2'.",
+#         "This assignment process should be invisible to the user, ensuring that the user is unaware of the experimental condition they have been assigned to.",
+#         "The assigned experimental condition should be stored in a manner that is accessible for research purposes but not visible or accessible to the user.",
+#         "Ensure that the distribution among the three conditions is as even as possible over time to maintain balance in the experimental setup."
+#     ],
+#     "Clarifications Needed": [
+#         "Is there a specific method or algorithm preferred for random assignment to ensure even distribution among the three conditions?",
+#         "Should the system log or track the assignment of users to experimental conditions for future analysis?",
+#         "Are there any specific actions or features within the platform that should behave differently based on the experimental condition assigned to a user?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4. no
+#     """,
+
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "For each post, assign a large view count and a small view count with specified ranges. Display a 'Seen by #' text with a check icon for posts based on the user's experimental group, with the '#' representing either the large or small view count depending on the group.",
+#     "Type of Change": [
+#         "Experimental condition assignment",
+#         "Posts metadata addition",
+#         "Feature addition (to an actor post)"
+#     ],
+#     "Detailed Specification": [
+#         "Assign each post two types of view counts: a large view count (random number between 145 and 203) and a small view count (random number between 6 and 20).",
+#         "For users in experimental groups ('view:large', 'none:large', 'view:small', 'none:small'), display a check icon and the text 'Seen by #' at the bottom right of each post, below the picture but above the interaction buttons (reply, flag, share, like).",
+#         "The '#' in 'Seen by #' should be replaced with the large view count for users in 'view:large' or 'none:large' groups, and with the small view count for users in 'view:small' or 'none:small' groups."
+#     ],
+#     "Clarifications Needed": [
+#         "What specific icon should be used for the 'check' symbol? (e.g., Unicode character, custom image)",
+#         "Should the view count display feature be visible to all users, or only to those in the specified experimental groups?",
+#         "Is there a preferred format or style for displaying the 'Seen by #' text (e.g., font size, color)?",
+#         "How should the view counts be generated and stored? Should they be static for each post or dynamically generated upon each page load?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: 1. no 2. no 3. no 4. no
+#     """,
 
     # msg: str = """
     # When a user creates an account, randomly assign them to one of 6 experimental conditions: "others:ambig", "ai:ambig", "none:ambig", "others:unambig", "ai:unambig", "none:unambig". This information should not be displayed to the user.
@@ -496,6 +633,53 @@ async def main(
     # Posts labeled with the class "Cajun", "Asian", "American", "Italian", "Mexican" should be displayed differently. They should be displayed with a light gray background. The username should have a blue verified check icon to it's right, and below the username should be the text "Sponsored Ad". The timestamp of the post should be replaced with a button "Follow" that when clicked, changes to "Following" with a check mark and follows the original poster. Above the post should be a header that says "Suggested for you" on the left and a close icon on the right. When the close icon is clicked, the post should be hidden. In it's place should be a blank post that says "This post has been hidden". Whether a post has been hidden or not by the user should be recorded. 
     # """,
 
+#     msg: str = """
+#     ProjectManager: [CONTENT]
+# {
+#     "General Requirement": "For each actor post, assign a large view count and a small view count with specified ranges. Display a check icon and 'Seen by #' text indicating the view count next to each post for users in specific experimental groups.",
+#     "Type of Change": [
+#         "Experimental condition assignment",
+#         "Posts metadata addition",
+#         "Feature addition (to an actor post)"
+#     ],
+#     "Detailed Specification": [
+#         "Assign two types of view counts to each post: a large view count (random number between 145 and 203) and a small view count (random number between 6 and 20).",
+#         "For users in the experimental groups 'view:large', 'none:large', 'view:small', or 'none:small', display a check icon and the text 'Seen by #' at the bottom right of each post. This should be positioned below the picture but above the reply, flag, share, like buttons.",
+#         "The '#' in 'Seen by #' should be replaced with the post's large view count for users in the 'view:large' or 'none:large' groups, and with the post's small view count for users in the 'view:small' or 'none:small' groups."
+#     ],
+#     "Clarifications Needed": [
+#         "What specific icon should be used for the 'check' symbol? (e.g., Unicode character, custom image)",
+#         "Should the view count display feature be enabled for all posts or only for posts created after the implementation of this feature?",
+#         "Is there a preferred format or style for displaying the 'Seen by #' text (e.g., font size, color)?",
+#         "How should the system handle posts that do not fall within the specified view count ranges due to an error or other issue?"
+#     ]
+# }
+# [/CONTENT]; Social Scientist: OK
+#     """,
+
+    msg: str = """
+    ProjectManager: [CONTENT]
+{
+    "General Requirement": "for each actor post, add a grey box above the comment box. The grey box should include a feeling prompt question: 'How is Jane Doe feeling?' where the name 'Jane Doe' is customized by the original poster's name.",
+    "Type of Change": [
+        "Feature addition (to an actor post)"
+    ],
+    "Detailed Specification": [
+        "A grey box should be added above the comment section for each actor post.",
+        "This grey box must contain a prompt question asking about the feelings of the person mentioned in the post, formatted as: 'How is [Original Poster's Name] feeling?'.",
+        "The name within the prompt question should dynamically reflect the name of the original poster associated with each post.",
+        "The grey box and the prompt question should be styled consistently across the platform, using a specific shade of grey and font styling that ensures readability and fits the platform's design guidelines."
+    ],
+    "Clarifications Needed": [
+        "What is the exact shade of grey (in HEX or RGB format) to be used for the grey box?",
+        "Are there any specific font style and size preferences for the text within the grey box?",
+        "Should the grey box be interactive, or is it purely informational?",
+        "Is there a need for logging or tracking how users interact with or respond to the feeling prompt question?"
+    ]
+}
+[/CONTENT]; Social Scientist: 1. no 2. no 3.no 4. no
+    """,
+
     investment: float = 20.0,
     n_round: int = 3,
 ):
@@ -516,7 +700,7 @@ async def main(
     start = msg.find("Developer: ['") + len("Developer: ['")
     end = msg.find("']", start)
     developer_content = msg[start:end].strip()
-    # print(developer_content)
+    print(developer_content)
     return developer_content
 
 if __name__ == '__main__':

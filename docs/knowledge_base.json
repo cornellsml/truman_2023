@@ -25,6 +25,7 @@
   ],
   "Technical guidance": [
     "For 'Experimental condition assignment' type of change, reference file 'models/User.js' (DON'T MODIFY IT). Then change the file 'controllers/user.js'.",
-    "There is no specific shade or color or font style or size preference for the text/platform"
+    "There is no specific shade or color or font style or size preference for the text/platform",
+    "Posts metadata addition: 1. Add 2 new fields to the Script Model schema: Go to the file ./models/Script.js. 2. When populating the database with posts, assign a random number to the new fields, based on the prompt requirement: Go to the file populate.js. "
   ]
 }

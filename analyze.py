@@ -130,17 +130,17 @@ async def main(
     # for each post, when they scroll past the post, display an opaque overlay over the post. This overlay should have the following: a large eye icon, the text "You've read this!", and a black button "Read Again?". If the user is in the experimental group "view:large" or "view:small", the overlay should also display the original poster's profile photo alongside text that says "Jane Doe" has been notified, where "Jane Doe" is replaced with the orignal poster's name. All these items should appear one above another and centered on the overlay. When the "Read Again?" button is clicked, the overlay should fade away so the user can see the post again.
     # """,
 
-    # msg: str =  """
-    # for each actor post, add a grey box above the comment box. The grey box should include a feeling prompt question: 'How is Jane Done feeling?' where the name "Jane Doe" is customized by the original poster's name.
-    # """,
+    msg: str =  """
+    for each actor post, add a grey box above the comment box. The grey box should include a feeling prompt question: 'How is Jane Done feeling?' where the name "Jane Doe" is customized by the original poster's name.
+    """,
         
     # msg: str = """
     # for each post, when they scroll past a post, display a grey box over the bottom quarter of the picture. The grey box should span the entire width of the picture and display the text "You've read this!". Also, it should display the original poster's profile picture, and the text "Jane Doe has been notified", where "Jane Doe" is customized by the original poster's name. 
     # """,
 
-    msg: str = """
-    add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text "Do you really want to share this image? Everyone on EatSnap.Love could potentially see this." then have 2 buttons: a green button that says "Yes, share it" and a red button that says "No, don't share it". If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.
-    """,
+    # msg: str = """
+    # add the following functionality: When they upload a new photo, display a popup window after they click Submit. The popup window should prompt the user with the text "Do you really want to share this image? Everyone on EatSnap.Love could potentially see this." then have 2 buttons: a green button that says "Yes, share it" and a red button that says "No, don't share it". If the green button is clicked, the photo should be uploaded. If the red button is clicked, the upload should not be uploaded.
+    # """,
 
     # msg: str = """
     # Show the post that has the comment labeled "ambig_flag" or "unambig_flag" at the top of the timeline each day. 
@@ -164,6 +164,12 @@ async def main(
     # After a user signs up for the platform and views the community rules, add a page that allows users to choose 2 cuisines out of a list of 5 (Cajun, Asian, American, Italian, Mexican). Display the text: "Choose 2 cuisines you are interested in for a more personalized newsfeed" above the selection form. Record the user's selection. Only display the posts with labels matching the user's selection in the newsfeed.
 
     # Posts labeled with the class "Cajun", "Asian", "American", "Italian", "Mexican" should be displayed differently. They should be displayed with a light gray background. The username should have a blue verified check icon to it's right, and below the username should be the text "Sponsored Ad". The timestamp of the post should be replaced with a button "Follow" that when clicked, changes to "Following" with a check mark and follows the original poster. Above the post should be a header that says "Suggested for you" on the left and a close icon on the right. When the close icon is clicked, the post should be hidden. In it's place should be a blank post that says "This post has been hidden". Whether a post has been hidden or not by the user should be recorded. 
+    # """,
+
+    # msg: str = """
+    # 1. For each post, assign a large view count and a small view count. The large view count value should be a random number between 145 and 203, and the small view count value should be a random number between 6 and 20. 
+
+    # 2. If the user is in the experimental group "view:large", "none:large", "view:small" or "none:small", then at the bottom right of each post (below the picture but above the reply, flag, share, like buttons), display a small check icon and the text "Seen by #" next to it. The # should be replaced by the post's large view count if the user is in the experimental group "view:large" or "none:large" or by post's small view count if the user is in the experimental group "view:small" or "none:small".
     # """,
 
     investment: float = 20.0,
