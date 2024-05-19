@@ -2,7 +2,7 @@ from typing import Coroutine
 import fire
 import re
 import json
-import MetaGPT.metagpt as metagpt
+import os
 import asyncio
 
 from metagpt.actions import Action, UserRequirement
@@ -49,7 +49,7 @@ class UpdateFile(Action):
 
     ## Format Example: {FORMAT_EXAMPLE}
     -----
-    Role: You are a senior software developer. You are receving a code snippet from another developer. You need to follow the instructions to update the file accordingly.
+    Role: You are a senior software developer. You are receiving a code snippet from another developer. You need to follow the instructions to update the file accordingly.
     ATTENTION: Use `##` to SPLIT SECTIONS, not `#`.
 
     # Updated File Content: Provided as Python str. Output the updated file content.
@@ -59,7 +59,9 @@ class UpdateFile(Action):
 
     FORMAT_EXAMPLE: str = """
     [CONTENT]
-    "Updated File Content": ""
+    {
+      "Updated File Content": "updated content here"
+    }
     [/CONTENT]
     """
 
@@ -89,40 +91,23 @@ class Writer(Role):
         updated_files = []
         for content in contents:
             rsp = f"[CONTENT]{content}[/CONTENT]"
-            file_name = parse_data(rsp)["File Name"]
-            code_snippet = parse_data(rsp)["Code"]
-            instruction = parse_data(rsp)["Instruction"]
+            parsed_content = parse_data(rsp)
+            file_name = parsed_content["File Name"]
+            code_snippet = parsed_content["Code"]
+            instruction = parsed_content["Instruction"]
             with open(TRUMAN_ROOT / file_name, "r") as f:
                 file_content = f.read()
             updated_file_content = await todo.run(file_content=file_content, code_snippet=code_snippet, instruction=instruction)
-            # with open(TRUMAN_ROOT / file_name, "r") as f:
-            #     f.write(file_content)
             updated_files.append((file_name, updated_file_content))
             
             logger.info(f"Updated file: {file_name}")
         
-        results=f"{updated_files}"
-        msg = Message(content=results, role=self.profile, cause_by=type(todo))
+        results = [f"Update File: [('{file_name}', '[CONTENT]\\n{{\\n  \"Updated File Content\": \"{content}\"\\n}}\\n[/CONTENT]')]" for file_name, content in updated_files]
+        msg = Message(content="\n".join(results), role=self.profile, cause_by=type(todo))
         return msg
         
 
 def main(
-#     msg: str = """
-# [CONTENT]
-# {
-#   "File Name": "models/User.js",
-#   "Code": "experimentalCondition: String, // Indicates the experimental condition user is assigned to. Values are defined in the .env file by the variable EXP_CONDITIONS_NAMES and assigned at account creation in the users controller.",
-#   "Instruction": "Add this field to the userSchema object in the User.js file, following the 'mturkID' field."
-# }
-# [/CONTENT]
-# [CONTENT]
-# {
-#   "File Name": "controllers/user.js",
-#   "Code": "const experimentalConditions = ['view:large', 'view:small', 'view:none', 'none:large', 'none:small', 'none:none'];\nconst selectedCondition = experimentalConditions[Math.floor(Math.random() * experimentalConditions.length)];\nuser.experimentalCondition = selectedCondition;",
-#   "Instruction": "Insert this code snippet in the 'postSignup' method, right before the 'const user = new User({...})' line."
-# }
-# [/CONTENT]
-#     """
 msg: str = 
 """[CONTENT]
 {
@@ -149,3 +134,4 @@ msg: str =
     
 if __name__ == "__main__":
     fire.Fire(main)
+
