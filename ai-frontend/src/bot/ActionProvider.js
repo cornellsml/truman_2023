@@ -403,7 +403,7 @@ class ActionProvider {
                 const message_err = "Uh Oh! Something went wrong. Please try again later.";
             });
 
-            if (API_FAIL != true) {
+            if (API_FAIL != true & api_response.status == "success") {
                 this.setState((prev) => {
                     const newPrevMsg = prev.messages.slice(0, -1)
                     return { ...prev, messages: [...newPrevMsg], }
