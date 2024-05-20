@@ -24,6 +24,7 @@ const config = {
             message: null,
             investment: null,
             n_rounds: null,
+            develop_response: null
         },
         agentLogs: [],
         chatID: null

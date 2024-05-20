@@ -6,6 +6,8 @@ import asyncio
 import main
 import analyze
 import develop
+import update
+import code_change
 
 
 app = Flask(__name__)
@@ -18,19 +20,25 @@ def index():
 @app.route('/code-implement', methods=['POST'])
 @cross_origin()
 def implement():
+    print("POST BODY")
     print(request.json)
-    code_change = request.json.get("code-changes", "")
+    develop_output = request.json.get("develop_output", "")
+
+    #function to correctly format develop_output
+    print("DEVELOP OUTPUT")
+    print(develop_output)
+    code_change_response = ""
     try:
-        # output = asyncio.run(code_change(code_change))
-        resp = "Code Change Implemented"
+        output = asyncio.run(code_change.main(develop_output))
+        code_change_response = output
         status = "success"
     except Exception as e:
-        resp = f"Something went wrong with your request. Please try again. Error: {str(e)}"
+        code_change_response = f"Something went wrong with your request. Please try again. Error: {str(e)}"
         status = "Fail"
     
     server_response = { 
             "status" : status, 
-            "response" : resp
+            "response" : code_change_response
     }
 
     return jsonify(server_response)
@@ -75,9 +83,9 @@ def get_query_TL():
 def response_dev():
     status = ""
     response_metagpt = ""
+    response_raw = ""
     try:
         #metagpt parameters
-        # Social Scientist: 1. no 2. no 3. no 4.no
         pm_string = request.json.get("projectManager", """
     Project Manager: [CONTENT]
 {
@@ -110,12 +118,14 @@ def response_dev():
         print(pm_final_string)
         #metagpt call
         output = asyncio.run(develop.main(msg=pm_final_string, investment=investment, n_round=n_round))
+        response_raw = output
         json_output = json_transform_develop(str(output))
         print(json_output)
         response_metagpt = json.loads(json_output)
         status = "Success"
     except Exception as e:
         response_metagpt = f"Something went wrong with your request. Please try again. Error: {str(e)}"
+        response_raw = ""
         status = "Fail"
     
     print("==== METAGPT RESPONSE ====")
@@ -123,7 +133,8 @@ def response_dev():
 
     server_response = { 
             "status" : status, 
-            "response" : response_metagpt
+            "response" : response_metagpt,
+            "raw-response" : response_raw
     } 
 
     return jsonify(server_response)

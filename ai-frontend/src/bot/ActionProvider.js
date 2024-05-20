@@ -97,6 +97,7 @@ class ActionProvider {
                 if (api_response.status == "Success") {
                     var log = this.stateRef.agentLogs.pop();
                     log["engineer"] = api_response.response
+                    this.stateRef.trumanCodeGenData.develop_response = api_response["raw-response"]
                     console.log("agentLog")
                     console.log(log)
                     this.stateRef.agentLogs.push(log)
@@ -359,7 +360,7 @@ class ActionProvider {
                 console.log(this.stateRef.trumanClarifyData.clarification)
                 const msg1 = this.createChatBotMessage('Okay, got it');
                 this.setChatbotMessage(msg1);
-                const msg2 = this.createChatBotMessage('Implementing your requested changes! This may take a moment.')
+                const msg2 = this.createChatBotMessage('Developing your requested changes! This may take a moment.')
                 this.setChatbotMessage(msg2);
                 this.metaGptExecHandler(true)
             }
@@ -383,7 +384,10 @@ class ActionProvider {
             this.setState((prev) => ({ ...prev, messages: [...prev.messages, loading], }))
             
             let api_response = "";
-            const postBody = this.stateRef.agentLogs.slice(-1)
+            const postBody = JSON.stringify({
+                develop_output: this.stateRef.trumanCodeGenData.develop_response
+            })
+
         await axios.post("http://localhost:5000/code-implement", postBody, { headers: { 'Content-Type': 'application/json' } })
             .then(resp => {
                 api_response = resp.data;
@@ -404,9 +408,21 @@ class ActionProvider {
                     const newPrevMsg = prev.messages.slice(0, -1)
                     return { ...prev, messages: [...newPrevMsg], }
                 })
+                const paths = api_response.response
+                console.log("PATHS: ")
+                console.log(paths)
+                const message2 = this.createChatBotMessage("Done! The updates can be found in the following files: ", {delay: 700});
+                this.setChatbotMessage(message2)
+                //print paths here
+
+                for (let i = 0; i < paths.length; i++) {
+                    console.log("Message " + i + ") " + paths[i])
+                    let code_html = <div><code>${paths[i]}</code></div>
+                    let code_msg = this.createChatBotMessage(code_html, {delay: 700});
+                    this.setChatbotMessage(code_msg);
+                }
+
             }
-            const message2 = this.createChatBotMessage("Done!", {delay: 700});
-            this.setChatbotMessage(message2)
         }
 
 
@@ -424,6 +440,7 @@ class ActionProvider {
         this.stateRef.trumanCodeGenData.message = null
         this.stateRef.trumanCodeGenData.investment = null
         this.stateRef.trumanCodeGenData.n_rounds = null
+        this.stateRef.trumanCodeGenData.develop_response = null
         this.stateRef.trumanCodeLaunch = null
         this.stateRef.trumanClarifyData.clarification = null
         this.stateRef.trumanClarifyData.clarifyTxt = null
