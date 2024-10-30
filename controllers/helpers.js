@@ -104,10 +104,10 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                                         script_feed[0].comments[commentIndex].flagged = true;
                                     }
                                 }
-                                // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
-                                if (user.blocked.includes(script_feed[0].comments[commentIndex].actor.username) && removedBlockedUserContent) {
-                                    script_feed[0].comments.splice(commentIndex, 1);
-                                }
+                            }
+                            // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
+                            if (user.blocked.includes(commentObject.commentor.username) && removedBlockedUserContent) {
+                                script_feed[0].comments.splice(script_feed[0].comments.indexOf(commentObject), 1);
                             }
                         }
                     }
@@ -154,6 +154,12 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                 if (user.blocked.includes(script_feed[0].actor.username) && removedBlockedUserContent) {
                     script_feed.splice(0, 1);
                 } else {
+                    for (const commentObject of script_feed[0].comments) {
+                        // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
+                        if (user.blocked.includes(commentObject.commentor.username) && removedBlockedUserContent) {
+                            script_feed[0].comments.splice(script_feed[0].comments.indexOf(commentObject), 1);
+                        }
+                    }
                     if (order == 'SHUFFLE') {
                         finalfeed_unseen.push(script_feed[0]);
                     } else {
