@@ -1,54 +1,65 @@
 {
-    "name": "truman",
-    "version": "1.0.0",
-    "description": "Base version of the Truman Platform",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/difrad/truman"
-    },
-    "author": "Dominic DiFranzo",
-    "license": "MIT",
-    "scripts": {
-        "dev": "nodemon app.js",
-        "start": "node app.js",
-        "test": "mocha --reporter spec"
-    },
-    "dependencies": {
-        "@node-rs/bcrypt": "^1.7.3",
-        "async": "^3.2.4",
-        "body-parser": "^1.20.2",
-        "compression": "^1.7.4",
-        "connect-mongo": "^5.0.0",
-        "csv-writer": "^1.6.0",
-        "csvtojson": "^2.0.10",
-        "dotenv": "^16.3.1",
-        "errorhandler": "^1.5.1",
-        "express": "^4.18.2",
-        "express-flash": "0.0.2",
-        "express-session": "^1.17.3",
-        "lodash": "^4.17.21",
-        "lusca": "^1.7.0",
-        "mongoose": "^7.4.5",
-        "morgan": "^1.10.0",
-        "multer": "^1.4.5-lts.1",
-        "node-schedule": "^2.1.1",
-        "passport": "^0.6.0",
-        "passport-local": "^1.0.0",
-        "pm2": "^5.3.0",
-        "pug": "^3.0.2",
-        "useragent": "^2.3.0",
-        "validator": "^13.11.0"
-    },
-    "devDependencies": {
-        "chai": "^4.3.8",
-        "nodemon": "^3.0.1",
-        "sinon": "^16.1.1",
-        "supertest": "^6.3.3"
-    },
-    "engines": {
-        "node": ">=20"
-    },
-    "overrides": {
-        "semver": "^7.5.3"
-    }
+  "name": "truman",
+  "version": "1.0.0",
+  "description": "Base version of the Truman Platform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/difrad/truman"
+  },
+  "author": "Dominic DiFranzo",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "test": "mocha --reporter spec",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@node-rs/bcrypt": "^1.7.3",
+    "async": "^3.2.4",
+    "body-parser": "^1.20.2",
+    "compression": "^1.7.4",
+    "connect-mongo": "^5.0.0",
+    "csv-writer": "^1.6.0",
+    "csvtojson": "^2.0.10",
+    "dotenv": "^16.3.1",
+    "errorhandler": "^1.5.1",
+    "express": "^4.18.2",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.3",
+    "handlebars": "^4.7.8",
+    "lodash": "^4.17.21",
+    "lusca": "^1.7.0",
+    "mongoose": "^7.4.5",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "node-schedule": "^2.1.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "pm2": "^5.3.0",
+    "pug": "^3.0.2",
+    "socket.io": "^4.8.0",
+    "useragent": "^2.3.0",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.8",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "nodemon": "^3.0.1",
+    "prettier": "3.3.3",
+    "sinon": "^16.1.1",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "overrides": {
+    "semver": "^7.5.3"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }

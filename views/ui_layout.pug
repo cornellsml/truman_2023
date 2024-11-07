@@ -20,6 +20,8 @@ html
   script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js')
   script(src='https://d35ayucabfexcy.cloudfront.net/js/lib/humanized_time_span.js')
   script(src='https://d35ayucabfexcy.cloudfront.net/js/lib/lazyload.transpiled.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js')
+  script(src='/socket.io/socket.io.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js')
   script(src='/public/js/main.js')
   block scripts
@@ -30,3 +32,13 @@ html
       .ui.grid.container#pagecontainer
         include partials/ui_flash
         block content
+        .ui.small.basic.share.modal
+          .ui.icon.header
+            i.share.icon
+            | You have shared this 
+            span.shareType
+            | !
+          .actions(style="text-align:center;")   
+            .ui.green.ok.inverted.button
+              i.checkmark.icon
+              | Done

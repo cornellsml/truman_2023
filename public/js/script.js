@@ -1,36 +1,53 @@
-$(window).on("load", function() {
-    $('.ui.tiny.post.modal').modal({
-        observeChanges: true
-    });
+$(window).on("load", function () {
+  $(".ui.tiny.post.modal").modal({
+    observeChanges: true,
+  });
 
-    // Add new post Modal functionality
-    $("#newpost, a.item.newpost").click(function() {
-        $('.ui.tiny.post.modal').modal('show');
-    });
+  // Add new post Modal functionality
+  $("#newpost, a.item.newpost").click(function () {
+    $(".ui.tiny.post.modal").modal("show");
+  });
 
-    // new post validator (picture and text can not be empty); using Fomantic UI
-    $('#postform').form({
-        on: 'blur',
-        fields: {
-            body: {
-                identifier: 'body',
-                rules: [{
-                    type: 'empty',
-                    prompt: 'Please add some text about your meal.'
-                }]
-            },
-            picinput: {
-                identifier: 'picinput',
-                rules: [{
-                    type: 'notExactly[/public/photo-camera.svg]',
-                    prompt: 'Please click on the Camera Icon to add a photo.'
-                }]
-            }
-        },
-        onSuccess: function(event, fields) {
-            $("#postform")[0].submit();
-            $('.actions .ui.green.button').addClass('disabled');
-            $('.actions .ui.green.button').val('Posting...');
-        }
-    });
+  // new post validator (picture and text can not be empty); using Fomantic UI
+  $("#postform").form({
+    on: "blur",
+    fields: {
+      body: {
+        identifier: "body",
+        rules: [
+          {
+            type: "empty",
+            prompt: "Please add some text about your meal.",
+          },
+        ],
+      },
+      picinput: {
+        identifier: "picinput",
+        rules: [
+          {
+            type: "notExactly[/public/photo-camera.svg]",
+            prompt: "Please click on the Camera Icon to add a photo.",
+          },
+        ],
+      },
+    },
+    onSuccess: function (event, fields) {
+      $("#postform")[0].submit();
+      socket.emit("timeline activity");
+      $(".actions .ui.green.button").addClass("disabled");
+      $(".actions .ui.green.button").val("Posting...");
+    },
+  });
+
+  // Socket listening to broadcasts
+  // Incoming activity
+  socket.on("timeline activity", async function (activity) {
+    if ($("#newActivityMessage .ui.fixed.bottom.sticky").is(":hidden")) {
+      $("#newActivityMessage .ui.fixed.bottom.sticky").show();
+    }
+  });
+
+  $("#newActivityMessage .ui.fixed.bottom.sticky").on("click", function () {
+    location.reload();
+  });
 });

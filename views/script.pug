@@ -2,6 +2,7 @@ extends ui_layout
 
 block styles 
   link(type='text/css', rel='stylesheet', href='/public/css/script.css')
+  link(type='text/css', rel='stylesheet', href='/public/css/chat.css')
 
 block content
   .computer.only.tablet.only.four.wide.column 
@@ -19,18 +20,22 @@ block content
       input(type='text', placeholder='Create a post')
       i.big.photo.link.icon
     each val in script
-      if val.relativeTime 
-        //- This is a User made post
-        include partials/userPost
-      else 
-        //- This is an Actor post
-        include partials/actorPost
+      include partials/post
+    #content.six.wide.computer.six.wide.tablet.column
+      include partials/chat
     .ui.fluid.card
       .content
         .description
         |  End of Posts for the last 24 hours.
+    .ui.one.column.centered.grid#newActivityMessage
+      .ui.fixed.bottom.sticky.hidden
+        .ui.icon.message.info
+          i.close.icon
+          i.undo.icon.float
+          .content
+            .ui.header There is some new activity!
+            p Click to reload feed.
   .computer.only.tablet.only.four.wide.column
-    
   .ui.tiny.post.modal
     i.close.icon
     .header Add a New Post
@@ -52,3 +57,4 @@ block scripts
     let numComments = !{JSON.stringify(user.numComments)};
   script(src='/public/js/script.js')
   script(src='/public/js/postFunctionalities.js')
+  script(src='/public/js/chat.js')

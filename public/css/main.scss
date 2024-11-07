@@ -25,7 +25,8 @@ footer {
   height: 45px;
   line-height: 45px;
 
-  p, ul {
+  p,
+  ul {
     margin-bottom: 0;
   }
 }
@@ -59,7 +60,9 @@ textarea {
 .thumbnail {
   padding: 0;
   border-radius: 0;
-  box-shadow: 0 0 5px #ccc, inset 0 0 0 #000;
+  box-shadow:
+    0 0 5px #ccc,
+    inset 0 0 0 #000;
 }
 
 // Font Icons

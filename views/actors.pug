@@ -16,3 +16,18 @@ block content
             if actor.profile.location
               i.marker.icon
               span=actor.profile.location
+    for agent in agents
+      .ui.card
+        .image
+          if agent.profile.picture
+            img(src='/public/picture.svg', data-src="/user_avatar/"+agent.profile.picture)
+          else
+            img(src=agent.gravatar(60))
+        .content
+          a(href='/user/'+agent.username).header= agent.profile.name
+          .meta="@"+agent.username
+          .description(style='white-space: pre-wrap')=agent.profile.bio
+          .description(style="margin-top: 5px;")
+            if agent.profile.location
+              i.marker.icon
+              span=agent.profile.location

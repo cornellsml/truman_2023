@@ -1,0 +1,11 @@
+# Ignore inputs
+input
+
+# Ignore pictures
+post_pictures
+profile_pictures
+
+# Ignore libs
+public/js/lib
+public/css/lib
+public/css/themes

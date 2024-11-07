@@ -1,0 +1,45 @@
+extends ../ui_layout
+
+block content
+  .twelve.wide.computer.tablet.sixteen.wide.mobile.column(style="margin-top: 2em; margin-bottom: 2em;")
+    h2(style="text-align: center;") Create New Actor
+
+    form.ui.large.form(action='/actors/new', method='POST', enctype='multipart/form-data')
+      input(type='hidden', name='_csrf', value=_csrf)
+      .field.image-upload
+        p(style="font-weight: bold; font-size: medium; margin-bottom: 0.2em") Profile Picture
+          span(style="font-weight: normal") (Click to Change)
+        label(for='picinput', style="width: fit-content")
+          if user.profile.picture
+            img#imgInp.ui.small.image(src='/user_avatar/'+user.profile.picture)
+          else
+            img#imgInp.ui.small.image(src=user.gravatar(60))
+        input#picinput(type='file', accept='image/*', capture='camera', name='picinput')
+      .inline.fields(style='padding-top: 10px !important;')
+        .ten.wide.field
+          label(for='username') Username
+          input.form-control(type='text', name='username', id='username')
+        .ten.wide.field
+          label(for='name') Name
+          input.form-control(type='text', name='name', id='name')
+        .ten.wide.field
+          label(for='actorType') Type
+          select#actorType.form-control(name='actorType' required)
+            option(value="") --Actor Type--
+            option(value="Actor", selected=actorType == "Actor") Actor
+            option(value="Agent", selected=actorType == "Agent") Agent
+      .inline.fields(style='padding-top: 10px !important;')
+        .six.wide.field
+          label(for='gender') Gender
+          input.form-control(type='text', name='gender', id='gender')
+        .six.wide.field
+          label(for='age') Age
+          input.form-control(type='number', name='age', id='age')
+        .six.wide.field
+          label(for='location') Location
+          input.form-control(type='text', name='location', id='location')
+      .field
+        label(for='bio') Bio
+        textarea(rows='2', name='bio', id='bio')=user.profile.bio
+      .ui.buttons
+        button.ui.large.positive.button(type='submit') Save

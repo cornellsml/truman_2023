@@ -1,0 +1,94 @@
+.ui.fluid.card(u_postID=val.postID, postID=val.id)
+  .content
+    .right.floated.time.meta=(val.absTime.getTime())
+    a.ui.avatar.image(href='/user/'+val.poster.username)
+      if val.postType == 'User' || val.postType == 'Agent'
+        if val.poster.profile.picture
+          img(src='/public/picture.svg', data-src="/user_avatar/"+val.poster.profile.picture)
+        else 
+          img(src=val.poster.gravatar(60))
+      else
+        img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.poster.profile.picture)
+    a(href='/user/'+val.poster.username)
+      span(data-position='bottom center' data-type=val.postType data-html='<div></div>' class=(user.username==val.poster.username ? null : "username"))=val.poster.profile.name? val.poster.profile.name : val.poster.username
+  .content.dimmable(class=val.flagged ? "dimmed": "")
+      .ui.dimmer.flag(class=val.flagged ? "active": "")
+        .contents
+          .center
+            h2.ui.inverted.icon.header
+              i.red.flag.icon
+              | You've flagged this!
+              h3.ui.inverted.header
+                  span="The admins will review this post further. We are sorry you had this experience."
+            .ui.inverted.unflag.button(tabindex='0')
+              i.flag.icon
+              | Unflag
+      if val.picture
+        .image
+          if val.postType == 'User' || val.postType == 'Agent'
+            img(src='/user_post/'+val.picture)
+          else
+            img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
+      .description=val.body
+  .myTimer.hidden 0
+  .four.ui.bottom.attached.icon.buttons
+    .ui.reply.button(tabindex='0')
+      i.reply.icon
+      |  Reply
+    //- Only display the flag button if this is a not the user's own post
+    if user.username != val.poster.username
+      .ui.flag.button(tabindex='0')
+        i.flag.icon
+        |  Flag
+      .ui.share.button(tabindex='0')
+        i.share.icon
+        |  Share
+    .ui.labeled.button(tabindex='0')
+      .ui.like.button(class=val.liked ? "red" : null)
+        i.heart.icon
+        |  Like
+      a.ui.basic.red.left.pointing.label.count=val.likes      
+  if val.comments.length > 0
+    .content
+      .ui.comments
+        each comment in val.comments
+          .comment(commentID=comment.id)
+            .content(class=!comment.flagged ? "transition hidden" : "")                       
+              .text(style="background-color: black; color: white; padding: 0.2em;")  You flagged this comment. The admins will review this comment further. We are sorry you had this experience.
+              .actions 
+                a.unflag Unflag
+            a.ui.avatar.image(href='/user/'+comment.commentor.username, class=comment.flagged ? "transition hidden" : "")
+              if comment.commentType == 'User' || comment.commentType == 'Agent'
+                if comment.commentor.profile.picture
+                  img(src='/public/picture.svg', data-src="/user_avatar/"+comment.commentor.profile.picture)
+                else 
+                  img(src=comment.commentor.gravatar(60))
+              else
+                img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.commentor.profile.picture)
+            .content(class=comment.flagged ? "transition hidden" : "")
+              a(href='/user/'+comment.commentor.username) 
+                span(data-position='bottom center' data-type=comment.commentType data-html='<div></div>' class=(user.username==comment.commentor.username ? null: "username"))= comment.commentor.profile.name || comment.commentor.username || comment.commentor.id
+              .metadata
+                span.date=(comment.absTime.getTime())
+                .rating
+                  i.heart.icon(class=comment.liked ? "red" : null)
+                  span.num=comment.likes
+                  |  Likes
+              .text=comment.body
+              .actions
+                a.like.comment(class=comment.liked ? "red" : null) !{comment.liked ? "Unlike" : "Like"}
+                //- Only display the flag button if this is a not the user's own comment
+                if user.username != comment.commentor.username
+                  a.flag.comment Flag
+                  a.share.comment Share
+  .extra.content
+    .ui.fluid.left.labeled.right.icon.input
+      .ui.label
+        if user.profile.picture
+          img.ui.avatar.image.small(src='/user_avatar/'+user.profile.picture, name=user.profile.name || user.username || user.id)
+        else
+          img.ui.avatar.image.small(src=user.gravatar(60), name=user.profile.name || user.username || user.id)            
+      .ui.form
+        .field 
+          textarea.newcomment(type='text', placeholder='Write a Comment' rows='1')
+      i.big.send.link.icon

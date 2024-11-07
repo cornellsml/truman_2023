@@ -5,7 +5,7 @@
     else
       img(src=user.gravatar(60))
   .content
-    a.header(href='/me')= user.profile.name || user.email || user.id
+    a.header(href='/user/'+user.username)= user.profile.name || user.email || user.id
     .meta="@"+user.username
     .description(style='white-space: pre-wrap')=user.profile.bio
     if user.profile.location

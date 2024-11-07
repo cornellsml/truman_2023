@@ -12,8 +12,6 @@
             if(showNewPostIcon)
               a.item.newpost
                 i.big.write.square.icon
-            a.item(href='/notifications') 
-              i.big.alarm.icon
           .ui.simple.dropdown.item
             if user.profile.picture
               img.ui.mini.spaced.circular.image(src='/user_avatar/'+user.profile.picture)
@@ -24,11 +22,12 @@
             i.dropdown.icon
             .left.menu
               if user.consent
-                a.item(href='/me') My Profile
+                a.item(href='/user/'+user.username) My Profile
                 a.item(href='/account') Update My Profile
                 if user.isAdmin
                   a.item(href='/completed') Study Progress
                   a.item(href='/actors') Simulation (Actors)
+                  a.item(href='/actors/new') Create New Actor
                 a.item(href='/com') View Community Rules
               a.item.logoutLink Log Out
 .mobile.only.row
@@ -43,8 +42,6 @@
         if(showNewPostIcon)
           a.item.newpost
             i.big.write.square.icon
-        a.item(href='/notifications') 
-          i.big.alarm.icon
       else 
         .item 
         .item
@@ -56,7 +53,7 @@
         i.dropdown.icon
         .left.menu
           if user.consent
-            a.item(href='/me') My Profile
+            a.item(href='/user/'+user.username) My Profile
             a.item(href='/account') Update My Profile
             if user.isAdmin
               a.item(href='/completed') Study Progress

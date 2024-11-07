@@ -2,32 +2,44 @@ extends ui_layout
 
 block styles
   link(type='text/css', rel='stylesheet', href='/public/css/script.css')
-  
+  link(type='text/css', rel='stylesheet', href='/public/css/chat.css')
+
 block content
   .computer.only.tablet.only.four.wide.column
-    .ui.card
-      .image
-        img(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+actor.profile.picture)
-      .content
-        a.header= actor.profile.name
-        .meta="@"+actor.username
-        .description(style='white-space: pre-wrap')=actor.profile.bio
-        .description(style="margin-top: 5px;")
-          if actor.profile.location
-            i.marker.icon
-            span=actor.profile.location
-        .ui.basic.primary.follow.button(style=" margin-top: 15px", actor_un = actor.username)
-          if user.followed.includes(actor.username)
-            i.check.icon 
-            | Following
-          else 
-            | Follow
-      .two.ui.bottom.attached.icon.buttons
-        button.ui.button.block(data-tooltip='Block User', data-position='bottom left', username=actor.username)
-          i.ban.icon
-        button.ui.button.report(data-tooltip='Report User', data-position='bottom right', username=actor.username)
-          i.flag.icon
-
+    if user.username == actor.username
+      include ./partials/userCard
+    else
+      .ui.card
+        .image
+          if actorType == "User" || actorType == "Agent"
+            if actor.profile.picture
+              img(src='/public/picture.svg', data-src="/user_avatar/"+actor.profile.picture)
+            else
+              img(src=actor.gravatar(60))
+          else
+            img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+actor.profile.picture)
+        .content
+          a.header= actor.profile.name
+          .meta="@"+actor.username
+          .description(style='white-space: pre-wrap')=actor.profile.bio
+          .description(style="margin-top: 5px;")
+            if actor.profile.location
+              i.marker.icon
+              span=actor.profile.location
+          .two.ui.equal.width.grid
+            .ui.basic.primary.follow.button(style="margin: 25px 0px 10px 15px;", actor_un=actor.username)
+              if user.followed.includes(actor.username)
+                i.check.icon
+                | Following
+              else
+                | Follow
+            .ui.basic.primary.message-user.button(style="margin: 25px 0px 10px 15px;", actor_un=actor.username)
+              | Message
+        .two.ui.bottom.attached.icon.buttons
+          button.ui.button.block(data-tooltip='Block User', data-position='bottom left', username=actor.username)
+            i.ban.icon
+          button.ui.button.report(data-tooltip='Report User', data-position='bottom right', username=actor.username)
+            i.flag.icon
   #loading.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column
     img.ui.centered.small.image(src='/public/heart.svg')
   #content.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column(style='display: none;')
@@ -37,12 +49,14 @@ block content
           .description
           |  No posts to show.
     each val in script
-      include ./partials/actorPost
-      
+      include ./partials/post
+    #content.six.wide.computer.six.wide.tablet.column
+      include partials/chat
+
   .ui.small.report.coupled.modal
     i.close.icon
-    .header 
-      i.flag.icon 
+    .header
+      i.flag.icon
       |  Report This User
     .content
       form#reportform.ui.reply.form(action='/user', method='POST')
@@ -66,7 +80,7 @@ block content
             .field
               .ui.radio.checkbox
                 input.hidden(type='radio', name='report_issue', value="hacked", tabindex='0')
-                label Their account may be hacked.          
+                label Their account may be hacked.
     .actions
       input.ui.green.button.disabled(type='submit', value='Submit', form='reportform')
   .ui.small.second.coupled.modal
@@ -84,7 +98,7 @@ block content
       i.ban.icon
       | You Have Blocked This User
     .content
-      p You will no longer see posts or comments from this user. You can choose to report this user or un-block them. 
+      p You will no longer see posts or comments from this user. You can choose to report this user or un-block them.
     .actions
       .ui.left.floated.red.inverted.button
         i.flag.icon
@@ -95,12 +109,17 @@ block content
       .ui.green.ok.inverted.button
         i.undo.icon
         | Un-Block User
-  .computer.only.tablet.only.four.wide.column 
-                     
+  .computer.only.tablet.only.four.wide.column
+
 block scripts
-  script().
+  script.
     let numComments = !{JSON.stringify(user.numComments)};
     let isBlocked = !{JSON.stringify(isBlocked)};
     let isReported = !{JSON.stringify(isReported)};
+  script.
+    $('.ui.editprofile.button').on('click', function() {
+        window.location.href = '/account';
+    });
   script(src='/public/js/actor.js')
   script(src='/public/js/postFunctionalities.js')
+  script(src='/public/js/chat.js')

@@ -1,26 +1,26 @@
 .ui.raised.segment {
-    padding: 1em 2em !important;
-    cursor: pointer;
+  padding: 1em 2em !important;
+  cursor: pointer;
 }
 
 .ui.raised.segment.read {
-    background: #eff0f0;
+  background: #eff0f0;
 }
 
 .event .extra.images {
-    margin: 0 !important;
+  margin: 0 !important;
 }
 
 .event .summary {
-    margin: .5em 0 0 !important;
+  margin: 0.5em 0 0 !important;
 }
 
 .event .extra.text {
-    margin: 0 !important;
+  margin: 0 !important;
 }
 
 .event .ui.tiny.right.floated.image {
-    margin: 0 !important;
-    height: 50px;
-    width: auto;
+  margin: 0 !important;
+  height: 50px;
+  width: auto;
 }

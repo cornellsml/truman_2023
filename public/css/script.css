@@ -1,93 +1,103 @@
 #content.hidden {
-    display: none;
+  display: none;
 }
-
 
 /* CSS for Actor and User Posts */
 
-
 /* POST */
 
-.ui.fluid.card>.content.dimmable>.image {
-    position: relative;
-    display: block;
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto;
-    padding: 0;
-    background: rgba(0, 0, 0, .05);
-    margin: -1em -1em 0 -1em;
+.ui.fluid.card > .content.dimmable.dimmed {
+  min-height: 300px;
 }
 
-.ui.fluid.card>.content.dimmable>.image>img {
-    width: 100%;
+.ui.fluid.card > .content.dimmable > .image {
+  position: relative;
+  display: block;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.05);
+  margin: -1em -1em 1em -1em;
 }
 
-.ui.fluid.card>.content.dimmable>.description {
-    padding-top: 1em;
+.ui.fluid.card > .content.dimmable > .image > img {
+  width: 100%;
 }
 
 .ui[class*="bottom attached"].buttons .button:first-child {
-    border-radius: 0 !important;
+  border-radius: 0 !important;
 }
 
 .ui[class*="bottom attached"].buttons .ui.label {
-    border-radius: 0 !important;
+  border-radius: 0 !important;
 }
-
 
 /* COMMMENT */
 
 .ui.comments .comment .text {
-    margin: 0.25em 0;
+  margin: 0.25em 0;
 }
 
 .comment .content.hidden,
 .comment a.avatar.hidden {
-    display: none !important;
+  display: none !important;
 }
-
 
 /* CSS for adding new post */
 
-.ui.label>img {
-    width: 2.1666em!important;
+.ui.label > img {
+  width: 2.1666em !important;
 }
-
 
 /* CSS for adding new comment on post */
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.form {
-    width: 100%;
+.extra.content > .ui.fluid.left.labeled.right.icon.input > .ui.form {
+  width: 100%;
 }
 
 textarea.newcomment {
-    border-radius: 0 .28571429rem .28571429rem 0;
+  border-radius: 0 0.28571429rem 0.28571429rem 0;
 }
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5em;
+.extra.content > .ui.fluid.left.labeled.right.icon.input > .ui.label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em;
 }
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.label>img {
-    margin: 0;
-    width: 2em!important;
+.extra.content > .ui.fluid.left.labeled.right.icon.input > .ui.label > img {
+  margin: 0;
+  width: 2em !important;
 }
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>i.big.send.link.icon {
-    margin-right: 4px;
+.extra.content
+  > .ui.fluid.left.labeled.right.icon.input
+  > i.big.send.link.icon {
+  margin-right: 4px;
 }
-
 
 /* CSS for reporting and blocking modals */
 
 .modal .ui.form label {
-    font-size: medium !important;
+  font-size: medium !important;
 }
 
 .modal .ui.form .grouped.fields .field {
-    margin-left: 5px !important;
+  margin-left: 5px !important;
+}
+
+/* CSS for New Timeline Activity message */
+
+#newActivityMessage {
+  cursor: pointer;
+}
+
+#newActivityMessage .ui.icon.message.info {
+  margin-bottom: 1em;
+}
+
+#newActivityMessage .ui.icon.message.info .content {
+  margin-right: 20px;
 }

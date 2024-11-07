@@ -1,58 +1,53 @@
 body {
-    background-color: #F5F8FA;
-    padding: 0em;
+  background-color: #f5f8fa;
+  padding: 0em;
 }
-
 
 /*Page Container*/
 
 #pagegrid {
-    justify-content: center;
+  justify-content: center;
 }
 
 #pagecontainer {
-    padding-top: 50px;
-    justify-content: center;
+  padding-top: 50px;
+  justify-content: center;
 }
-
 
 /*General CSS*/
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 a,
 button,
 .ui.button {
-    cursor: pointer;
+  cursor: pointer;
 }
-
 
 /* Header CSS */
 
-.ui.menu .item>i.icon {
-    margin: 0 !important;
+.ui.menu .item > i.icon {
+  margin: 0 !important;
 }
 
 .ui.mini.image {
-    height: 35px;
+  height: 35px;
 }
-
 
 /*Other*/
 
-.ui.fluid.card>.content>.description {
-    font-size: 1.05em;
+.ui.fluid.card > .content > .description {
+  font-size: 1.05em;
 }
-
 
 /* Image Upload*/
 
-.image-upload>input {
-    display: none;
+.image-upload > input {
+  display: none;
 }
 
 .image-upload img {
-    cursor: pointer;
+  cursor: pointer;
 }
