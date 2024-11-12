@@ -48,6 +48,15 @@ exports.getFeed = function (
 
     // While there are actor posts or user posts to add to the final feed
     while (script_feed.length) {
+      // If the post is not an actor post and its sessionID doesn't match the sessionID of the current user, remove the post from the final feed
+      if (
+        script_feed[0].postType !== "Actor" &&
+        script_feed[0].poster.sessionID != user.sessionID
+      ) {
+        script_feed.splice(0, 1);
+        continue;
+      }
+
       // Filter comments to include only comments labeled with the experimental condition the user is in.
       script_feed[0].comments = script_feed[0].comments.filter(
         (comment) =>

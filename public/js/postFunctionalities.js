@@ -34,7 +34,7 @@ function likePost(e) {
       _csrf: $('meta[name="csrf-token"]').attr("content"),
     });
   }
-  socket.emit("timeline activity");
+  socket.emit("timeline activity", $("#session").attr("sessionID"));
 }
 
 function flagPost(e) {
@@ -134,7 +134,7 @@ function likeComment(e) {
       _csrf: $('meta[name="csrf-token"]').attr("content"),
     });
   }
-  socket.emit("timeline activity");
+  socket.emit("timeline activity", $("#session").attr("sessionID"));
 }
 
 function flagComment(e) {
@@ -269,7 +269,7 @@ function addComment(e) {
       numComments = json.numComments;
     });
   }
-  socket.emit("timeline activity");
+  socket.emit("timeline activity", $("#session").attr("sessionID"));
 }
 
 function followUser(e) {

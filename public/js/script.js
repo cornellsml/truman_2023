@@ -33,7 +33,7 @@ $(window).on("load", function () {
     },
     onSuccess: function (event, fields) {
       $("#postform")[0].submit();
-      socket.emit("timeline activity");
+      socket.emit("timeline activity", $("#session").attr("sessionID"));
       $(".actions .ui.green.button").addClass("disabled");
       $(".actions .ui.green.button").val("Posting...");
     },
@@ -41,8 +41,11 @@ $(window).on("load", function () {
 
   // Socket listening to broadcasts
   // Incoming activity
-  socket.on("timeline activity", async function (activity) {
-    if ($("#newActivityMessage .ui.fixed.bottom.sticky").is(":hidden")) {
+  socket.on("timeline activity", async function (sessionID) {
+    if (
+      sessionID === $("#session").attr("sessionID") &&
+      $("#newActivityMessage .ui.fixed.bottom.sticky").is(":hidden")
+    ) {
       $("#newActivityMessage .ui.fixed.bottom.sticky").show();
     }
   });

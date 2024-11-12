@@ -141,21 +141,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use((req, res, next) => {
-  // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-  // This allows us to not check CSRF when uploading an image file. It's a weird issue that multer and lusca do not play well together.
-  if (
-    req.path === "/post/new" ||
-    req.path === "/actors/new" ||
-    req.path === "/account/profile" ||
-    req.path === "/account/signup_info_post"
-  ) {
-    console.log("Not checking CSRF. Out path now");
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
-});
+app.use(
+  lusca.csrf({
+    // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
+    // This allows us to not check CSRF when uploading an image file. It's a weird issue that multer and lusca do not play well together.
+    blocklist: [
+      "/post/new",
+      "/actors/new",
+      "/account/profile",
+      "/account/signup_info_post",
+    ],
+  }),
+);
 
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
@@ -369,9 +366,8 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("chat typing", msg); // emit to all listening sockets but the one sending
   });
 
-  socket.on("timeline activity", (msg) => {
-    console.log(msg);
-    socket.broadcast.emit("timeline activity", msg); // emit to all listening sockets but the one sending
+  socket.on("timeline activity", (sessionID) => {
+    socket.broadcast.emit("timeline activity", sessionID); // emit to all listening sockets but the one sending
   });
 
   socket.on("error", function (err) {

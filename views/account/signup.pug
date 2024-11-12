@@ -15,6 +15,9 @@ block content
           label(for='mturkID') !{process.env.IDENTIFIER}
           input(type='text', name='mturkID', id='mturkID', placeholder=process.env.IDENTIFIER, required)
         .field
+          label(for='sessionID') Session ID
+          input(type='text', name='sessionID', id='sessionID', placeholder='Session ID', required)
+        .field
           label(for='email') Email (will not be publicly displayed)
           input(type='email', name='email', id='email', placeholder='Email', required)
         .field

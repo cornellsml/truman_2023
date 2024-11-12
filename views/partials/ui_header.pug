@@ -1,5 +1,5 @@
-.computer.only.tablet.only.row 
-  .ui.borderless.fixed.menu
+.computer.only.tablet.only.row
+  .ui.borderless.fixed.menu#session(sessionID=user === undefined ? "" : user.sessionID)
     .ui.container
       a.item(href= user===undefined ? (process.env.POST_SURVEY_WITH_QUALTRICS ? `/?r_id=${r_id}`: '/' ): (user.consent ? "/": "#"))
         img.ui.tiny.image(src=process.env.SITE_LOGO, id='logo')
@@ -31,7 +31,7 @@
                 a.item(href='/com') View Community Rules
               a.item.logoutLink Log Out
 .mobile.only.row
-  .ui.fluid.top.fixed.four.item.menu
+  .ui.fluid.top.fixed.four.item.menu#session(sessionID=user === undefined ? "" : user.sessionID)
     a.item(href=user===undefined ? (process.env.POST_SURVEY_WITH_QUALTRICS ? `/?r_id=${r_id}`: '/' ): (user.consent ? "/": "#"))
       img.ui.tiny.image(src=process.env.SITE_LOGO, id='mobile_logo')
     if !user
@@ -42,8 +42,8 @@
         if(showNewPostIcon)
           a.item.newpost
             i.big.write.square.icon
-      else 
-        .item 
+      else
+        .item
         .item
       .ui.simple.dropdown.item
         if user.profile.picture
@@ -58,5 +58,6 @@
             if user.isAdmin
               a.item(href='/completed') Study Progress
               a.item(href='/actors') Simulation (Actors)
+              a.item(href='/actors/new') Create New Actor
             a.item(href='/com') View Community Rules
           a.item.logoutLink Log Out
