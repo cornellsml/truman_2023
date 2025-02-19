@@ -10,7 +10,8 @@ const actorSchema = new mongoose.Schema({
         bio: String,
         picture: String
     },
-    class: String // For experimental use (can be used to define the type of actor)
+    class: String,
+    condition: String // For experimental use (can be used to define the type of actor)
 }, { timestamps: true });
 
 const Actor = mongoose.model('Actor', actorSchema);

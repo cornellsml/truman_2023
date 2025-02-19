@@ -42,7 +42,7 @@ exports.getActor = async(req, res, next) => {
         }
         const isBlocked = user.blocked.includes(req.params.userId);
         const isReported = user.reported.includes(req.params.userId);
-        const script_feed = await Script.find({ actor: actor.id, class: { "$in": ["", user.experimentalCondition] } })
+        const script_feed = await Script.find({ actor: actor.id, condition: { "$in": ["", user.experimentalCondition] } })
             .where('time').lte(time_diff)
             .sort('-time')
             .populate('actor')

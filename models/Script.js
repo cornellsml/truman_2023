@@ -9,8 +9,11 @@ const scriptSchema = new mongoose.Schema({
     actor: { type: Schema.ObjectId, ref: 'Actor' }, // Actor of post
     time: Number, // Indicates when the post was created relative to how much time has passed since the user created their account, in milliseconds
 
-    class: { type: String,
-            default: '', trim: true }, // For experimental use (If blank/null, this post is shown to all users. If defined, this post is shown only to users with the same value for their experimental condition)
+    class: {
+        type: String,
+            default: '', trim: true
+    },
+    condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this post is shown to all users. If defined, this post is shown only to users with the same value for their experimental condition)
 
     // Sorted by least recent --> most recent
     // List of actor comments on the post
@@ -21,7 +24,11 @@ const scriptSchema = new mongoose.Schema({
         actor: { type: Schema.ObjectId, ref: 'Actor' }, // Actor of comment
         time: Number, // Indicates when the comment was created relative to how much time has passed since the user created their account, in milliseconds
 
-        class: String, // For experimental use (If blank/null, this comment is shown to all users. If defined, this comment is shown only to users with the same value for their experimental condition)
+        class: {
+            type: String,
+                default: '', trim: true
+        },
+        condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this comment is shown to all users. If defined, this comment is shown only to users with the same value for their experimental condition)
 
         new_comment: { type: Boolean, default: false }, // T/F; indicates if the comment is by the user
         liked: { type: Boolean, default: false }, // T/F; indicates if the comment is liked by the user

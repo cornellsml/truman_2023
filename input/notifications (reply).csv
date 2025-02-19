@@ -1,7 +1,7 @@
-id,userPostID,body,actor,time,class
-0,0,Looking good :),ancho-n-cayenne,0:04,
-1,0,Nice!,NoahM1121,0:10,
-2,1,love it!,casssssssssie,0:03,
-3,2,❤️❤️,lee.alexa,0:09,
-4,3,nice 📷,_aikira_,0:06,
-5,5,😍😍😍😍,lee.alexa,0:27,
+id,userPostID,body,actor,time,condition,class
+0,0,Looking good :),ancho-n-cayenne,0:04,,
+1,0,Nice!,NoahM1121,0:10,,
+2,1,love it!,casssssssssie,0:03,,
+3,2,❤️❤️,lee.alexa,0:09,,
+4,3,nice 📷,_aikira_,0:06,,
+5,5,😍😍😍😍,lee.alexa,0:27,,

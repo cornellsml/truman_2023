@@ -25,7 +25,7 @@ exports.getNotifications = async(req, res) => {
             const lastNotifyVisit = user.lastNotifyVisit; //Absolute Date
             const notification_feed = await Notification.find({
                     $or: [{ userPostID: { $lte: user.numPosts } }, { userReplyID: { $lte: user.numComments } }],
-                    class: { "$in": ["", user.experimentalCondition] }
+                    condition: { "$in": ["", user.experimentalCondition] }
                 })
                 .populate('actor')
                 .sort('-time')

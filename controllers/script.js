@@ -44,7 +44,7 @@ exports.getScript = async(req, res, next) => {
 
         // Array of actor posts that match the user's experimental condition, within the past 24 hours, sorted by descending time. 
         let script_feed = await Script.find({
-                class: { "$in": ["", user.experimentalCondition] }
+                condition: { "$in": ["", user.experimentalCondition] }
             })
             .where('time').lte(time_diff).gte(time_limit)
             .sort('-time')
@@ -91,7 +91,9 @@ exports.newPost = async(req, res) => {
             };
 
             // Find any Actor replies (comments) that go along with this post
-            const actor_replies = await Notification.find()
+            const actor_replies = await Notification.find({
+                    condition: { "$in": ["", user.experimentalCondition] }
+                })
                 .where('userPostID').equals(post.postID)
                 .where('notificationType').equals('reply')
                 .populate('actor').exec();
@@ -140,7 +142,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
         if (feedIndex == -1) {
             const cat = {
                 post: req.body.postID,
-                postClass: req.body.postClass,
+                postCondition: req.body.postCondition,
             };
             feedIndex = user.feedAction.push(cat) - 1;
         }

@@ -10,7 +10,12 @@ const notificationSchema = new mongoose.Schema({
     userReplyID: Number, // Indicates which user reply this action responds to (0,1,2....n)
     replyBody: { type: String, default: '', trim: true }, // Text(body) of the actor's reply
 
-    class: String, // For experimental use (If blank/null, this notification is shown to all users. If defined, this notification is shown only to users with the same value for their experimental condition)
+    class: {
+        type: String,
+            default: '', trim: true
+    },
+    condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this comment is shown to all users. If defined, this comment is shown only to users with the same value for their experimental condition)
+
 }, { timestamps: true });
 
 const Notification = mongoose.model('Notification', notificationSchema);

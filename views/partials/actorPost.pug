@@ -1,4 +1,4 @@
-.ui.fluid.card(postClass=val.class, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
+.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
   .content
     .right.floated.time.meta= (user.createdAt.getTime() + val.time)
     a(href='/user/'+val.actor.username)     

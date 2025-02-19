@@ -2,7 +2,7 @@ function likePost(e) {
     const target = $(e.target).closest('.ui.like.button');
     const label = target.closest('.ui.like.button').next("a.ui.basic.red.left.pointing.label.count");
     const postID = target.closest(".ui.fluid.card").attr("postID");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const currDate = Date.now();
 
     if (target.hasClass("red")) { // Unlike Post
@@ -19,7 +19,7 @@ function likePost(e) {
             $.post("/feed", {
                 postID: postID,
                 unlike: currDate,
-                postClass: postClass,
+                postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     } else { // Like Post
@@ -36,7 +36,7 @@ function likePost(e) {
             $.post("/feed", {
                 postID: postID,
                 like: currDate,
-                postClass: postClass,
+                postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
@@ -46,13 +46,13 @@ function flagPost(e) {
     const target = $(e.target);
     const post = target.closest(".ui.fluid.card");
     const postID = post.attr("postID");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const flag = Date.now();
 
     $.post("/feed", {
         postID: postID,
         flag: flag,
-        postClass: postClass,
+        postCondition: postCondition,
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
@@ -62,13 +62,13 @@ function unflagPost(e) {
     const target = $(e.target);
     const post = target.closest(".ui.fluid.card");
     const postID = post.attr("postID");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const unflag = Date.now();
 
     $.post("/feed", {
         postID: postID,
         unflag: unflag,
-        postClass: postClass,
+        postCondition: postCondition,
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
@@ -80,7 +80,7 @@ function likeComment(e) {
     const label = comment.find("span.num");
 
     const postID = target.closest(".ui.fluid.card").attr("postID");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const commentID = comment.attr("commentID");
     const isUserComment = comment.find("a.author").attr('href') === '/me';
     const currDate = Date.now();
@@ -105,7 +105,7 @@ function likeComment(e) {
                 commentID: commentID,
                 unlike: currDate,
                 isUserComment: isUserComment,
-                postClass: postClass,
+                postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
         }
@@ -129,7 +129,7 @@ function likeComment(e) {
                 commentID: commentID,
                 like: currDate,
                 isUserComment: isUserComment,
-                postClass: postClass,
+                postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
@@ -139,7 +139,7 @@ function flagComment(e) {
     const target = $(e.target);
     const commentElement = target.parents(".comment");
     const postID = target.closest(".ui.fluid.card").attr("postID");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const commentID = commentElement.attr("commentID");
 
     const comment_imageElement = commentElement.children('a.avatar');
@@ -158,7 +158,7 @@ function flagComment(e) {
             postID: postID,
             commentID: commentID,
             flag: flag,
-            postClass: postClass,
+            postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
 }
@@ -167,7 +167,7 @@ function unflagComment(e) {
     const target = $(e.target);
     const commentElement = target.parents(".comment");
     const postID = target.closest(".ui.fluid.card").attr("postID");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const commentID = commentElement.attr("commentID");
 
     const comment_imageElement = commentElement.children('a.avatar.hidden');
@@ -187,7 +187,7 @@ function unflagComment(e) {
             postID: postID,
             commentID: commentID,
             unflag: unflag,
-            postClass: postClass,
+            postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
 }
@@ -197,7 +197,7 @@ function addComment(e) {
     const text = target.siblings(".ui.form").find("textarea.newcomment").val().trim();
     const card = target.parents(".ui.fluid.card");
     let comments = card.find(".ui.comments");
-    const postClass = target.closest(".ui.fluid.card").attr("postClass");
+    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     // no comments area - add it
     if (!comments.length) {
         const buttons = card.find(".ui.bottom.attached.icon.buttons")
@@ -245,7 +245,7 @@ function addComment(e) {
                 postID: postID,
                 new_comment: currDate,
                 comment_text: text,
-                postClass: postClass,
+                postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             }).then(function(json) {
                 numComments = json.numComments;
@@ -363,13 +363,13 @@ $(window).on('load', () => {
 
             var parent = $(this).parents(".ui.fluid.card");
             var postID = parent.attr("postID");
-            var postClass = parent.attr("postClass");
+            var postCondition = parent.attr("postCondition");
             // If user viewed it for less than 24 hours, but more than 1.5 seconds (just in case)
             if (totalViewTime < 86400000 && totalViewTime > 1500 && startTime > 0) {
                 $.post("/feed", {
                     postID: postID,
                     viewed: totalViewTime,
-                    postClass: postClass,
+                    postCondition: postCondition,
                     _csrf: $('meta[name="csrf-token"]').attr('content')
                 });
                 // Reset Timer
@@ -397,13 +397,13 @@ $(window).on('load', () => {
 
                 var parent = $(this).parents(".ui.fluid.card");
                 var postID = parent.attr("postID");
-                var postClass = parent.attr("postClass");
+                var postCondition = parent.attr("postCondition");
                 // If user viewed it for less than 24 hours, but more than 1.5 seconds (just in case)
                 if (totalViewTime < 86400000 && totalViewTime > 1500 && startTime > 0) {
                     $.post("/feed", {
                         postID: postID,
                         viewed: totalViewTime,
-                        postClass: postClass,
+                        postCondition: postCondition,
                         _csrf: $('meta[name="csrf-token"]').attr('content')
                     });
                     // Reset Timer

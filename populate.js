@@ -133,7 +133,8 @@ async function doPopulate() {
                                 bio: actor_raw.bio,
                                 picture: actor_raw.picture
                             },
-                            class: actor_raw.class
+                            class: actor_raw.class,
+                            condition: actor_raw.condition
                         };
 
                         const actor = new Actor(actordetail);
@@ -173,7 +174,8 @@ async function doPopulate() {
                                 likes: new_post.likes || getLikes(),
                                 actor: act,
                                 time: timeStringToNum(new_post.time) || null,
-                                class: new_post.class
+                                class: new_post.class,
+                                condition: new_post.condition
                             }
 
                             const script = new Script(postdetail);
@@ -225,7 +227,8 @@ async function doPopulate() {
                                     likes: new_reply.likes || getLikesComment(),
                                     actor: act,
                                     time: timeStringToNum(new_reply.time),
-                                    class: new_reply.class
+                                    class: new_reply.class,
+                                    condition: new_reply.condition
                                 };
 
                                 pr.comments.push(comment_detail);
@@ -277,7 +280,8 @@ async function doPopulate() {
                                 time: timeStringToNum(new_notify.time),
                                 userPostID: new_notify.userPostID,
                                 replyBody: new_notify.body,
-                                class: new_notify.class
+                                class: new_notify.class,
+                                condition: new_notify.condition
                             };
 
                             const notify = new Notification(notifydetail);
@@ -318,7 +322,8 @@ async function doPopulate() {
                                 actor: act,
                                 notificationType: new_notify.type,
                                 time: timeStringToNum(new_notify.time),
-                                class: new_notify.class
+                                class: new_notify.class,
+                                condition: new_notify.condition
                             };
 
                             if (new_notify.userPostID >= 0 && new_notify.userPostID) {
