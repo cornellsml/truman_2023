@@ -19,7 +19,7 @@ block content
     h3 No NSFW material
     p If you wouldn't show your boss, don't show it here! 
 
-    if !user.consent
+    if user && !user.consent
       .ui.big.green.labeled.icon.button.info
           i.rocket.icon
           |   Got it!
